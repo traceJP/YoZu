@@ -1,0 +1,2 @@
+com.tracejp.yozu.common.redis.configure.RedisConfig
+com.tracejp.yozu.common.redis.service.RedisService

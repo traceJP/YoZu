@@ -1,0 +1,3 @@
+com.tracejp.yozu.system.api.factory.RemoteUserFallbackFactory
+com.tracejp.yozu.system.api.factory.RemoteLogFallbackFactory
+com.tracejp.yozu.system.api.factory.RemoteFileFallbackFactory

@@ -1,0 +1,2 @@
+com.tracejp.yozu.common.log.service.AsyncLogService
+com.tracejp.yozu.common.log.aspect.LogAspect
