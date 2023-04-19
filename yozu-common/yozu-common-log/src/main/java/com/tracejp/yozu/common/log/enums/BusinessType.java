@@ -2,11 +2,10 @@ package com.tracejp.yozu.common.log.enums;
 
 /**
  * 业务操作类型
- * 
+ *
  * @author yozu
  */
-public enum BusinessType
-{
+public enum BusinessType {
     /**
      * 其它
      */

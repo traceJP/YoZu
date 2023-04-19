@@ -1,6 +1,7 @@
 package com.tracejp.yozu.file.service;
 
 import java.io.InputStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,7 @@ import com.tracejp.yozu.common.core.utils.file.FileTypeUtils;
  * @author yozu
  */
 @Service
-public class FastDfsSysFileServiceImpl implements ISysFileService
-{
+public class FastDfsSysFileServiceImpl implements ISysFileService {
     /**
      * 域名或本机访问地址
      */
@@ -34,8 +34,7 @@ public class FastDfsSysFileServiceImpl implements ISysFileService
      * @throws Exception
      */
     @Override
-    public String uploadFile(MultipartFile file) throws Exception
-    {
+    public String uploadFile(MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
         StorePath storePath = storageClient.uploadFile(inputStream, file.getSize(),
                 FileTypeUtils.getExtension(file), null);

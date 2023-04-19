@@ -2,11 +2,10 @@ package com.tracejp.yozu.common.core.constant;
 
 /**
  * Token的Key常量
- * 
+ *
  * @author yozu
  */
-public class TokenConstants
-{
+public class TokenConstants {
     /**
      * 令牌自定义标识
      */

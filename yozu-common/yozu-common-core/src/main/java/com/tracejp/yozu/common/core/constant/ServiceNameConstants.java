@@ -2,11 +2,10 @@ package com.tracejp.yozu.common.core.constant;
 
 /**
  * 服务名称
- * 
+ *
  * @author yozu
  */
-public class ServiceNameConstants
-{
+public class ServiceNameConstants {
     /**
      * 认证服务的serviceid
      */

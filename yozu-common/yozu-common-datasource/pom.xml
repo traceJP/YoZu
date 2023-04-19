@@ -8,7 +8,7 @@
         <version>3.6.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    
+
     <artifactId>yozu-common-datasource</artifactId>
 
     <description>

@@ -8,17 +8,15 @@ import com.tracejp.yozu.common.swagger.annotation.EnableCustomSwagger2;
 
 /**
  * 代码生成
- * 
+ *
  * @author yozu
  */
 @EnableCustomConfig
 @EnableCustomSwagger2
 @EnableRyFeignClients
 @SpringBootApplication
-public class YozuGenApplication
-{
-    public static void main(String[] args)
-    {
+public class YozuGenApplication {
+    public static void main(String[] args) {
         SpringApplication.run(YozuGenApplication.class, args);
         System.out.println("(♥◠‿◠)ﾉﾞ  代码生成模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 " .-------.       ____     __        \n" +

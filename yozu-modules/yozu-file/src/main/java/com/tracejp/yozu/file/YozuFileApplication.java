@@ -7,15 +7,13 @@ import com.tracejp.yozu.common.swagger.annotation.EnableCustomSwagger2;
 
 /**
  * 文件服务
- * 
+ *
  * @author yozu
  */
 @EnableCustomSwagger2
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
-public class YozuFileApplication
-{
-    public static void main(String[] args)
-    {
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+public class YozuFileApplication {
+    public static void main(String[] args) {
         SpringApplication.run(YozuFileApplication.class, args);
         System.out.println("(♥◠‿◠)ﾉﾞ  文件服务模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 " .-------.       ____     __        \n" +

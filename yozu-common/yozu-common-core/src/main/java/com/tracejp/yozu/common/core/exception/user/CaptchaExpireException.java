@@ -2,15 +2,13 @@ package com.tracejp.yozu.common.core.exception.user;
 
 /**
  * 验证码失效异常类
- * 
+ *
  * @author yozu
  */
-public class CaptchaExpireException extends UserException
-{
+public class CaptchaExpireException extends UserException {
     private static final long serialVersionUID = 1L;
 
-    public CaptchaExpireException()
-    {
+    public CaptchaExpireException() {
         super("user.jcaptcha.expire", null);
     }
 }

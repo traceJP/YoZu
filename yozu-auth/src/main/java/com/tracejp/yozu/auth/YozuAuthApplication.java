@@ -7,15 +7,13 @@ import com.tracejp.yozu.common.security.annotation.EnableRyFeignClients;
 
 /**
  * 认证授权中心
- * 
+ *
  * @author yozu
  */
 @EnableRyFeignClients
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
-public class YozuAuthApplication
-{
-    public static void main(String[] args)
-    {
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+public class YozuAuthApplication {
+    public static void main(String[] args) {
         SpringApplication.run(YozuAuthApplication.class, args);
         System.out.println("(♥◠‿◠)ﾉﾞ  认证授权中心启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 " .-------.       ____     __        \n" +

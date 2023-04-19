@@ -8,17 +8,15 @@ import com.tracejp.yozu.common.swagger.annotation.EnableCustomSwagger2;
 
 /**
  * 定时任务
- * 
+ *
  * @author yozu
  */
 @EnableCustomConfig
 @EnableCustomSwagger2
-@EnableRyFeignClients   
+@EnableRyFeignClients
 @SpringBootApplication
-public class YozuJobApplication
-{
-    public static void main(String[] args)
-    {
+public class YozuJobApplication {
+    public static void main(String[] args) {
         SpringApplication.run(YozuJobApplication.class, args);
         System.out.println("(♥◠‿◠)ﾉﾞ  定时任务模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 " .-------.       ____     __        \n" +

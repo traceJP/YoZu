@@ -2,12 +2,10 @@ package com.tracejp.yozu.common.log.enums;
 
 /**
  * 操作状态
- * 
- * @author yozu
  *
+ * @author yozu
  */
-public enum BusinessStatus
-{
+public enum BusinessStatus {
     /**
      * 成功
      */

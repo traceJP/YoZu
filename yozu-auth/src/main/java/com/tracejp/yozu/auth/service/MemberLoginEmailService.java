@@ -16,7 +16,6 @@ public class MemberLoginEmailService implements ILoginService {
     public LoginUser login(LoginBody form) {
 
 
-
         return null;
     }
 

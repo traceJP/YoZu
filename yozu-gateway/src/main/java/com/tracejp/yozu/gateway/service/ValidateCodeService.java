@@ -1,6 +1,7 @@
 package com.tracejp.yozu.gateway.service;
 
 import java.io.IOException;
+
 import com.tracejp.yozu.common.core.exception.CaptchaException;
 import com.tracejp.yozu.common.core.web.domain.AjaxResult;
 
@@ -9,15 +10,14 @@ import com.tracejp.yozu.common.core.web.domain.AjaxResult;
  *
  * @author yozu
  */
-public interface ValidateCodeService
-{
+public interface ValidateCodeService {
     /**
      * 生成验证码
      */
-    public AjaxResult createCaptcha() throws IOException, CaptchaException;
+    AjaxResult createCaptcha() throws IOException, CaptchaException;
 
     /**
      * 校验验证码
      */
-    public void checkCaptcha(String key, String value) throws CaptchaException;
+    void checkCaptcha(String key, String value) throws CaptchaException;
 }

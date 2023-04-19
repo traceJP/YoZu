@@ -23,12 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * token 控制
- * 
+ *
  * @author yozu
  */
 @RestController
-public class TokenController
-{
+public class TokenController {
     @Autowired
     private TokenService tokenService;
 
@@ -39,8 +38,7 @@ public class TokenController
     private SysRecordLogService recordLogService;
 
     @PostMapping("login")
-    public R<?> login(@RequestBody LoginBody form)
-    {
+    public R<?> login(@RequestBody LoginBody form) {
         // 用户登录
         LoginTypeEnum loginType = form.getType();
         LoginUser userInfo = loginService.login(form, loginType);
@@ -49,11 +47,9 @@ public class TokenController
     }
 
     @DeleteMapping("logout")
-    public R<?> logout(HttpServletRequest request)
-    {
+    public R<?> logout(HttpServletRequest request) {
         String token = SecurityUtils.getToken(request);
-        if (StringUtils.isNotEmpty(token))
-        {
+        if (StringUtils.isNotEmpty(token)) {
             String username = JwtUtils.getUserName(token);
             // 删除用户缓存记录
             AuthUtil.logoutByToken(token);
@@ -64,11 +60,9 @@ public class TokenController
     }
 
     @PostMapping("refresh")
-    public R<?> refresh(HttpServletRequest request)
-    {
+    public R<?> refresh(HttpServletRequest request) {
         LoginUser loginUser = tokenService.getLoginUser(request);
-        if (StringUtils.isNotNull(loginUser))
-        {
+        if (StringUtils.isNotNull(loginUser)) {
             // 刷新令牌有效期
             tokenService.refreshToken(loginUser);
             return R.ok();
@@ -77,8 +71,7 @@ public class TokenController
     }
 
     @PostMapping("register")
-    public R<?> register(@RequestBody RegisterBody registerBody)
-    {
+    public R<?> register(@RequestBody RegisterBody registerBody) {
         // 用户注册 单独抽离一个类出来注册
         // sysLoginService.register(registerBody);
         return R.ok();

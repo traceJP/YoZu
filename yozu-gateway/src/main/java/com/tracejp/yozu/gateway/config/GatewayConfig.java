@@ -8,16 +8,14 @@ import com.tracejp.yozu.gateway.handler.SentinelFallbackHandler;
 
 /**
  * 网关限流配置
- * 
+ *
  * @author yozu
  */
 @Configuration
-public class GatewayConfig
-{
+public class GatewayConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SentinelFallbackHandler sentinelGatewayExceptionHandler()
-    {
+    public SentinelFallbackHandler sentinelGatewayExceptionHandler() {
         return new SentinelFallbackHandler();
     }
 }

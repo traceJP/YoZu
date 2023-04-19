@@ -12,8 +12,8 @@ import com.tracejp.yozu.system.api.model.LoginUser;
  */
 public interface ILoginService {
 
-    public LoginUser login(LoginBody form);
+    LoginUser login(LoginBody form);
 
-    public LoginTypeEnum getLoginType();
+    LoginTypeEnum getLoginType();
 
 }

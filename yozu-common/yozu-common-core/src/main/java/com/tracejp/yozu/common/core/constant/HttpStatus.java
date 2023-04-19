@@ -2,11 +2,10 @@ package com.tracejp.yozu.common.core.constant;
 
 /**
  * 返回状态码
- * 
+ *
  * @author yozu
  */
-public class HttpStatus
-{
+public class HttpStatus {
     /**
      * 操作成功
      */

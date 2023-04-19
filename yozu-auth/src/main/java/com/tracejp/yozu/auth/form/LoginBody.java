@@ -5,12 +5,11 @@ import lombok.Data;
 
 /**
  * 用户登录对象
- * 
+ *
  * @author yozu
  */
 @Data
-public class LoginBody
-{
+public class LoginBody {
     /**
      * 用户名（System）
      */

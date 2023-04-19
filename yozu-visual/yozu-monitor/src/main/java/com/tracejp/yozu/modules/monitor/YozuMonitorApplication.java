@@ -6,15 +6,13 @@ import de.codecentric.boot.admin.server.config.EnableAdminServer;
 
 /**
  * 监控中心
- * 
+ *
  * @author yozu
  */
 @EnableAdminServer
 @SpringBootApplication
-public class YozuMonitorApplication
-{
-    public static void main(String[] args)
-    {
+public class YozuMonitorApplication {
+    public static void main(String[] args) {
         SpringApplication.run(YozuMonitorApplication.class, args);
         System.out.println("(♥◠‿◠)ﾉﾞ  监控中心启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 " .-------.       ____     __        \n" +
