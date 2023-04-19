@@ -1,39 +1,44 @@
 package com.tracejp.yozu.auth.form;
 
+import com.tracejp.yozu.auth.form.constant.LoginTypeEnum;
+import lombok.Data;
+
 /**
  * 用户登录对象
  * 
  * @author yozu
  */
+@Data
 public class LoginBody
 {
     /**
-     * 用户名
+     * 用户名（System）
      */
     private String username;
+
+    /**
+     * 手机号
+     */
+    private String phone;
+
+    /**
+     * 邮箱
+     */
+    private String email;
 
     /**
      * 用户密码
      */
     private String password;
 
-    public String getUsername()
-    {
-        return username;
-    }
+    /**
+     * 短信验证码 | Oauth2.0 code
+     */
+    private String code;
 
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }
+    /**
+     * 登录类型
+     */
+    private LoginTypeEnum type;
 
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
 }

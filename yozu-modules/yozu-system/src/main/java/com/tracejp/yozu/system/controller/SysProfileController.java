@@ -28,6 +28,8 @@ import com.tracejp.yozu.system.service.ISysUserService;
 
 /**
  * 个人信息 业务处理
+ *
+ * TODO 参考此处个人信息业务处理 - 需要单独抽离个人信息修改业务、密码修改业务、头像修改业务
  * 
  * @author yozu
  */
