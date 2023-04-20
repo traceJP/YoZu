@@ -5,7 +5,7 @@ import com.tracejp.yozu.auth.form.constant.LoginTypeEnum;
 import com.tracejp.yozu.auth.service.ILoginService;
 import com.tracejp.yozu.common.core.exception.auth.LoginOperationException;
 import com.tracejp.yozu.common.core.exception.auth.RepeatTypeException;
-import com.tracejp.yozu.system.api.model.LoginUser;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.tracejp.yozu.system.service.impl;
 
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.StringUtils;
-import com.tracejp.yozu.system.api.model.LoginUser;
 import com.tracejp.yozu.system.domain.SysUserOnline;
 import com.tracejp.yozu.system.service.ISysUserOnlineService;
 import org.springframework.stereotype.Service;

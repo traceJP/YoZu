@@ -1,9 +1,13 @@
-package com.tracejp.yozu.system.api.model;
+package com.tracejp.yozu.common.core.model;
+
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
+import com.tracejp.yozu.common.core.enums.UserType;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
-
-import com.tracejp.yozu.system.api.domain.SysUser;
 
 /**
  * 用户信息
@@ -19,12 +23,12 @@ public class LoginUser implements Serializable {
     private String token;
 
     /**
-     * 用户名id
+     * 用户名id [ 系统用户：自增ID | 会员用户：自增ID ]
      */
     private Long userid;
 
     /**
-     * 用户名
+     * 用户名 [ 系统用户：非重复用户名 | 会员注册用户：UUID ]
      */
     private String username;
 
@@ -54,9 +58,14 @@ public class LoginUser implements Serializable {
     private Set<String> roles;
 
     /**
-     * 用户信息
+     * 用户类型
      */
-    private SysUser sysUser;
+    private UserType userType;
+
+    /**
+     * 用户信息 用户需要根据用户类型来自行判断序列化
+     */
+    private Map<String, Object> userInfo = new HashMap<>(16);
 
     public String getToken() {
         return token;
@@ -122,11 +131,26 @@ public class LoginUser implements Serializable {
         this.roles = roles;
     }
 
-    public SysUser getSysUser() {
-        return sysUser;
+    public UserType getUserType() {
+        return userType;
     }
 
-    public void setSysUser(SysUser sysUser) {
-        this.sysUser = sysUser;
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
+
+    public Map<String, Object> getUserInfo() {
+        return userInfo;
+    }
+
+    public <T> T getUserInfo(Class<T> clazz) {
+        return JSON.parseObject(JSON.toJSONString(userInfo), clazz);
+    }
+
+    public void setUserInfo(Object user) {
+        String userJson = JSON.toJSONString(user);
+        Map<String, Object> map = JSON.parseObject(userJson, new TypeReference<Map<String, Object>>() {});
+        userInfo.putAll(map);
+    }
+
 }

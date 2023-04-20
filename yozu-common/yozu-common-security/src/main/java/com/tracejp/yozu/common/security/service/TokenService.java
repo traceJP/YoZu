@@ -1,14 +1,8 @@
 package com.tracejp.yozu.common.security.service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.tracejp.yozu.common.core.constant.CacheConstants;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.JwtUtils;
 import com.tracejp.yozu.common.core.utils.ServletUtils;
 import com.tracejp.yozu.common.core.utils.StringUtils;
@@ -16,7 +10,13 @@ import com.tracejp.yozu.common.core.utils.ip.IpUtils;
 import com.tracejp.yozu.common.core.utils.uuid.IdUtils;
 import com.tracejp.yozu.common.redis.service.RedisService;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
-import com.tracejp.yozu.system.api.model.LoginUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * token验证处理
@@ -43,19 +43,15 @@ public class TokenService {
      */
     public Map<String, Object> createToken(LoginUser loginUser) {
         String token = IdUtils.fastUUID();
-        Long userId = loginUser.getSysUser().getUserId();
-        String userName = loginUser.getSysUser().getUserName();
         loginUser.setToken(token);
-        loginUser.setUserid(userId);
-        loginUser.setUsername(userName);
         loginUser.setIpaddr(IpUtils.getIpAddr());
         refreshToken(loginUser);
 
         // Jwt存储信息
         Map<String, Object> claimsMap = new HashMap<String, Object>();
         claimsMap.put(SecurityConstants.USER_KEY, token);
-        claimsMap.put(SecurityConstants.DETAILS_USER_ID, userId);
-        claimsMap.put(SecurityConstants.DETAILS_USERNAME, userName);
+        claimsMap.put(SecurityConstants.DETAILS_USER_ID, loginUser.getUserid());
+        claimsMap.put(SecurityConstants.DETAILS_USERNAME, loginUser.getUsername());
 
         // 接口返回信息
         Map<String, Object> rspMap = new HashMap<String, Object>();

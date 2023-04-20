@@ -1,8 +1,8 @@
 package com.tracejp.yozu.common.security.auth;
 
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.security.annotation.RequiresPermissions;
 import com.tracejp.yozu.common.security.annotation.RequiresRoles;
-import com.tracejp.yozu.system.api.model.LoginUser;
 
 /**
  * Token 权限验证工具类

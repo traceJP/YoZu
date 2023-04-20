@@ -28,6 +28,11 @@
             <artifactId>yozu-api-system</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.tracejp.yozu</groupId>
+            <artifactId>yozu-api-member</artifactId>
+        </dependency>
+
         <!-- yozu Common Redis-->
         <dependency>
             <groupId>com.tracejp.yozu</groupId>

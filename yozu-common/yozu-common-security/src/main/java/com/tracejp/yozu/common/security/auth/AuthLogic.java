@@ -1,14 +1,10 @@
 package com.tracejp.yozu.common.security.auth;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.springframework.util.PatternMatchUtils;
 import com.tracejp.yozu.common.core.context.SecurityContextHolder;
 import com.tracejp.yozu.common.core.exception.auth.NotLoginException;
 import com.tracejp.yozu.common.core.exception.auth.NotPermissionException;
 import com.tracejp.yozu.common.core.exception.auth.NotRoleException;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.SpringUtils;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.security.annotation.Logical;
@@ -17,7 +13,11 @@ import com.tracejp.yozu.common.security.annotation.RequiresPermissions;
 import com.tracejp.yozu.common.security.annotation.RequiresRoles;
 import com.tracejp.yozu.common.security.service.TokenService;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
-import com.tracejp.yozu.system.api.model.LoginUser;
+import org.springframework.util.PatternMatchUtils;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Token 权限验证，逻辑实现类

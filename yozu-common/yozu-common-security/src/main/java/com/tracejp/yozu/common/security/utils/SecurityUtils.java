@@ -1,14 +1,14 @@
 package com.tracejp.yozu.common.security.utils;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
 import com.tracejp.yozu.common.core.constant.TokenConstants;
 import com.tracejp.yozu.common.core.context.SecurityContextHolder;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.ServletUtils;
 import com.tracejp.yozu.common.core.utils.StringUtils;
-import com.tracejp.yozu.system.api.model.LoginUser;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 权限获取工具类

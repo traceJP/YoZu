@@ -2,7 +2,7 @@ package com.tracejp.yozu.auth.service;
 
 import com.tracejp.yozu.auth.form.LoginBody;
 import com.tracejp.yozu.auth.form.constant.LoginTypeEnum;
-import com.tracejp.yozu.system.api.model.LoginUser;
+import com.tracejp.yozu.common.core.model.LoginUser;
 
 /**
  * <p>  <p/>

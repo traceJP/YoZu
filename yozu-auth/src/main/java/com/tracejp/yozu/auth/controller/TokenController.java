@@ -7,12 +7,12 @@ import com.tracejp.yozu.auth.handler.LoginHandlerContext;
 import com.tracejp.yozu.auth.service.SysRecordLogService;
 import com.tracejp.yozu.common.core.constant.Constants;
 import com.tracejp.yozu.common.core.domain.R;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.JwtUtils;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.security.auth.AuthUtil;
 import com.tracejp.yozu.common.security.service.TokenService;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
-import com.tracejp.yozu.system.api.model.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,6 +41,9 @@ public class TokenController {
     public R<?> login(@RequestBody LoginBody form) {
         // 用户登录
         LoginTypeEnum loginType = form.getType();
+        if (loginType == null) {
+            loginType = LoginTypeEnum.SYSTEM_USER;
+        }
         LoginUser userInfo = loginService.login(form, loginType);
         // 获取登录token
         return R.ok(tokenService.createToken(userInfo));

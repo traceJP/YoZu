@@ -1,6 +1,8 @@
 package com.tracejp.yozu.system.controller;
 
 import com.tracejp.yozu.common.core.domain.R;
+import com.tracejp.yozu.common.core.enums.UserType;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.core.utils.poi.ExcelUtil;
 import com.tracejp.yozu.common.core.web.controller.BaseController;
@@ -14,7 +16,6 @@ import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import com.tracejp.yozu.system.api.domain.SysDept;
 import com.tracejp.yozu.system.api.domain.SysRole;
 import com.tracejp.yozu.system.api.domain.SysUser;
-import com.tracejp.yozu.system.api.model.LoginUser;
 import com.tracejp.yozu.system.service.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +107,10 @@ public class SysUserController extends BaseController {
         // 权限集合
         Set<String> permissions = permissionService.getMenuPermission(sysUser);
         LoginUser sysUserVo = new LoginUser();
-        sysUserVo.setSysUser(sysUser);
+        sysUserVo.setUserInfo(sysUser);
+        sysUserVo.setUserid(sysUser.getUserId());
+        sysUserVo.setUsername(sysUser.getUserName());
+        sysUserVo.setUserType(UserType.SYSTEM_USER);
         sysUserVo.setRoles(roles);
         sysUserVo.setPermissions(permissions);
         return R.ok(sysUserVo);

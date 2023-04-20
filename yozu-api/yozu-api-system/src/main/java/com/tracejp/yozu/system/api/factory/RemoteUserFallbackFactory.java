@@ -1,13 +1,13 @@
 package com.tracejp.yozu.system.api.factory;
 
+import com.tracejp.yozu.common.core.domain.R;
+import com.tracejp.yozu.common.core.model.LoginUser;
+import com.tracejp.yozu.system.api.RemoteUserService;
+import com.tracejp.yozu.system.api.domain.SysUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
-import com.tracejp.yozu.common.core.domain.R;
-import com.tracejp.yozu.system.api.RemoteUserService;
-import com.tracejp.yozu.system.api.domain.SysUser;
-import com.tracejp.yozu.system.api.model.LoginUser;
 
 /**
  * 用户服务降级处理

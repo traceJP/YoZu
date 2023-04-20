@@ -9,13 +9,13 @@ import com.tracejp.yozu.common.core.constant.UserConstants;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.enums.UserStatus;
 import com.tracejp.yozu.common.core.exception.ServiceException;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.text.Convert;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.core.utils.ip.IpUtils;
 import com.tracejp.yozu.common.redis.service.RedisService;
 import com.tracejp.yozu.system.api.RemoteUserService;
 import com.tracejp.yozu.system.api.domain.SysUser;
-import com.tracejp.yozu.system.api.model.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +80,7 @@ public class SysLoginService implements ILoginService {
         }
 
         LoginUser userInfo = userResult.getData();
-        SysUser user = userResult.getData().getSysUser();
+        SysUser user = userResult.getData().getUserInfo(SysUser.class);
         if (UserStatus.DELETED.getCode().equals(user.getDelFlag())) {
             recordLogService.recordLogininfor(username, Constants.LOGIN_FAIL, "对不起，您的账号已被删除");
             throw new ServiceException("对不起，您的账号：" + username + " 已被删除");

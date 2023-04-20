@@ -1,17 +1,13 @@
 package com.tracejp.yozu.system.api;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
 import com.tracejp.yozu.common.core.constant.ServiceNameConstants;
 import com.tracejp.yozu.common.core.domain.R;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.system.api.domain.SysUser;
 import com.tracejp.yozu.system.api.factory.RemoteUserFallbackFactory;
-import com.tracejp.yozu.system.api.model.LoginUser;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户服务

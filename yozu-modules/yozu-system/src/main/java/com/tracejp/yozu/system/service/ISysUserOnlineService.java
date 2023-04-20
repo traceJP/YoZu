@@ -1,6 +1,6 @@
 package com.tracejp.yozu.system.service;
 
-import com.tracejp.yozu.system.api.model.LoginUser;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.system.domain.SysUserOnline;
 
 /**

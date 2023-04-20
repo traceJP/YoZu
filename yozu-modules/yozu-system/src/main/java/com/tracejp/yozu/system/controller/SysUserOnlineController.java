@@ -1,6 +1,7 @@
 package com.tracejp.yozu.system.controller;
 
 import com.tracejp.yozu.common.core.constant.CacheConstants;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.core.web.controller.BaseController;
 import com.tracejp.yozu.common.core.web.domain.AjaxResult;
@@ -9,7 +10,6 @@ import com.tracejp.yozu.common.log.annotation.Log;
 import com.tracejp.yozu.common.log.enums.BusinessType;
 import com.tracejp.yozu.common.redis.service.RedisService;
 import com.tracejp.yozu.common.security.annotation.RequiresPermissions;
-import com.tracejp.yozu.system.api.model.LoginUser;
 import com.tracejp.yozu.system.domain.SysUserOnline;
 import com.tracejp.yozu.system.service.ISysUserOnlineService;
 import org.springframework.beans.factory.annotation.Autowired;

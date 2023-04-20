@@ -1,13 +1,7 @@
 package com.tracejp.yozu.common.datascope.aspect;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.springframework.stereotype.Component;
 import com.tracejp.yozu.common.core.context.SecurityContextHolder;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.text.Convert;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.core.web.domain.BaseEntity;
@@ -15,7 +9,13 @@ import com.tracejp.yozu.common.datascope.annotation.DataScope;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import com.tracejp.yozu.system.api.domain.SysRole;
 import com.tracejp.yozu.system.api.domain.SysUser;
-import com.tracejp.yozu.system.api.model.LoginUser;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 数据过滤处理
@@ -65,7 +65,7 @@ public class DataScopeAspect {
         // 获取当前的用户
         LoginUser loginUser = SecurityUtils.getLoginUser();
         if (StringUtils.isNotNull(loginUser)) {
-            SysUser currentUser = loginUser.getSysUser();
+            SysUser currentUser = loginUser.getUserInfo(SysUser.class);
             // 如果是超级管理员，则不过滤数据
             if (StringUtils.isNotNull(currentUser) && !currentUser.isAdmin()) {
                 String permission = StringUtils.defaultIfEmpty(controllerDataScope.permission(), SecurityContextHolder.getPermission());

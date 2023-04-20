@@ -17,20 +17,20 @@ public enum LoginTypeEnum {
     MEMBER_USER_OAUTH2_WEIBO((short) 4, "注册会员用户社交微博登录");
 
 
-    private short code;
+    private Short code;
 
     private String desc;
 
-    LoginTypeEnum(short code, String desc) {
+    LoginTypeEnum(Short code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public short getCode() {
+    public Short getCode() {
         return code;
     }
 
-    public void setCode(short code) {
+    public void setCode(Short code) {
         this.code = code;
     }
 
