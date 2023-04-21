@@ -1,16 +1,16 @@
 package com.tracejp.yozu.auth;
 
+import com.tracejp.yozu.common.security.annotation.EnableYozuFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import com.tracejp.yozu.common.security.annotation.EnableRyFeignClients;
 
 /**
  * 认证授权中心
  *
  * @author yozu
  */
-@EnableRyFeignClients
+@EnableYozuFeignClients
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class YozuAuthApplication {
     public static void main(String[] args) {

@@ -13,6 +13,7 @@
         <module>yozu-gen</module>
         <module>yozu-job</module>
         <module>yozu-file</module>
+        <module>yozu-member</module>
     </modules>
 
     <artifactId>yozu-modules</artifactId>

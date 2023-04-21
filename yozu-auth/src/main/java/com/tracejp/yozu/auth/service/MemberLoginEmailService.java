@@ -17,8 +17,10 @@ public class MemberLoginEmailService implements ILoginService {
     @Override
     public LoginUser login(LoginBody form) {
 
-
         // TODO 发送请求 目标接口直接返回 LoginUser类型对象
+
+        // 只有两种情况 账号或者密码错误  成功
+
 
         return null;
     }

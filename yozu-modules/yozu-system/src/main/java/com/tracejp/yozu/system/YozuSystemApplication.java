@@ -1,7 +1,7 @@
 package com.tracejp.yozu.system;
 
 import com.tracejp.yozu.common.security.annotation.EnableCustomConfig;
-import com.tracejp.yozu.common.security.annotation.EnableRyFeignClients;
+import com.tracejp.yozu.common.security.annotation.EnableYozuFeignClients;
 import com.tracejp.yozu.common.swagger.annotation.EnableCustomSwagger2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @EnableCustomConfig
 @EnableCustomSwagger2
-@EnableRyFeignClients
+@EnableYozuFeignClients
 @SpringBootApplication
 public class YozuSystemApplication {
     public static void main(String[] args) {

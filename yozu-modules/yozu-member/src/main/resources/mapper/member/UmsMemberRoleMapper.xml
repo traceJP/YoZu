@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tracejp.yozu.member.mapper.UmsMemberRoleMapper">
+
+    <resultMap type="UmsMemberRole" id="UmsMemberRoleResult">
+        <result property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="roleKey" column="role_key"/>
+        <result property="defaultStatus" column="default_status"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectUmsMemberRoleVo">
+        select role_id,
+               role_name,
+               role_key,
+               default_status,
+               status,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark
+        from ums_member_role
+    </sql>
+
+    <select id="selectUmsMemberRoleList" parameterType="UmsMemberRole" resultMap="UmsMemberRoleResult">
+        <include refid="selectUmsMemberRoleVo"/>
+        <where>
+            <if test="roleName != null  and roleName != ''">
+                and role_name like concat('%', #{roleName}, '%')
+            </if>
+            <if test="roleKey != null  and roleKey != ''">
+                and role_key = #{roleKey}
+            </if>
+            <if test="defaultStatus != null ">
+                and default_status = #{defaultStatus}
+            </if>
+            <if test="status != null  and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectUmsMemberRoleByRoleId" parameterType="Long"
+            resultMap="UmsMemberRoleResult">
+        <include refid="selectUmsMemberRoleVo"/>
+        where role_id = #{roleId}
+    </select>
+
+    <insert id="insertUmsMemberRole" parameterType="UmsMemberRole">
+        insert into ums_member_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">role_id,
+            </if>
+            <if test="roleName != null and roleName != ''">role_name,
+            </if>
+            <if test="roleKey != null and roleKey != ''">role_key,
+            </if>
+            <if test="defaultStatus != null">default_status,
+            </if>
+            <if test="status != null and status != ''">status,
+            </if>
+            <if test="createBy != null">create_by,
+            </if>
+            <if test="createTime != null">create_time,
+            </if>
+            <if test="updateBy != null">update_by,
+            </if>
+            <if test="updateTime != null">update_time,
+            </if>
+            <if test="remark != null">remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">#{roleId},
+            </if>
+            <if test="roleName != null and roleName != ''">#{roleName},
+            </if>
+            <if test="roleKey != null and roleKey != ''">#{roleKey},
+            </if>
+            <if test="defaultStatus != null">#{defaultStatus},
+            </if>
+            <if test="status != null and status != ''">#{status},
+            </if>
+            <if test="createBy != null">#{createBy},
+            </if>
+            <if test="createTime != null">#{createTime},
+            </if>
+            <if test="updateBy != null">#{updateBy},
+            </if>
+            <if test="updateTime != null">#{updateTime},
+            </if>
+            <if test="remark != null">#{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateUmsMemberRole" parameterType="UmsMemberRole">
+        update ums_member_role
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="roleName != null and roleName != ''">role_name =
+                #{roleName},
+            </if>
+            <if test="roleKey != null and roleKey != ''">role_key =
+                #{roleKey},
+            </if>
+            <if test="defaultStatus != null">default_status =
+                #{defaultStatus},
+            </if>
+            <if test="status != null and status != ''">status =
+                #{status},
+            </if>
+            <if test="createBy != null">create_by =
+                #{createBy},
+            </if>
+            <if test="createTime != null">create_time =
+                #{createTime},
+            </if>
+            <if test="updateBy != null">update_by =
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">update_time =
+                #{updateTime},
+            </if>
+            <if test="remark != null">remark =
+                #{remark},
+            </if>
+        </trim>
+        where role_id = #{roleId}
+    </update>
+
+    <delete id="deleteUmsMemberRoleByRoleId" parameterType="Long">
+        delete
+        from ums_member_role
+        where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteUmsMemberRoleByRoleIds" parameterType="String">
+        delete from ums_member_role where role_id in
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+</mapper>

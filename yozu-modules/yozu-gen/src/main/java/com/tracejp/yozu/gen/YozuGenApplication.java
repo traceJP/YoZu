@@ -1,10 +1,10 @@
 package com.tracejp.yozu.gen;
 
+import com.tracejp.yozu.common.security.annotation.EnableCustomConfig;
+import com.tracejp.yozu.common.security.annotation.EnableYozuFeignClients;
+import com.tracejp.yozu.common.swagger.annotation.EnableCustomSwagger2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.tracejp.yozu.common.security.annotation.EnableCustomConfig;
-import com.tracejp.yozu.common.security.annotation.EnableRyFeignClients;
-import com.tracejp.yozu.common.swagger.annotation.EnableCustomSwagger2;
 
 /**
  * 代码生成
@@ -13,7 +13,7 @@ import com.tracejp.yozu.common.swagger.annotation.EnableCustomSwagger2;
  */
 @EnableCustomConfig
 @EnableCustomSwagger2
-@EnableRyFeignClients
+@EnableYozuFeignClients
 @SpringBootApplication
 public class YozuGenApplication {
     public static void main(String[] args) {

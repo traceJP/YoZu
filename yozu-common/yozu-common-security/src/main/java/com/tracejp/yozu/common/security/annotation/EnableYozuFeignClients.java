@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @EnableFeignClients
-public @interface EnableRyFeignClients {
+public @interface EnableYozuFeignClients {
     String[] value() default {};
 
     String[] basePackages() default {"com.tracejp.yozu"};

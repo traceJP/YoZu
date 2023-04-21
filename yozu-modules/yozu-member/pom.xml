@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>yozu-user</artifactId>
+    <artifactId>yozu-member</artifactId>
 
     <description>
         yozu-user注册用户模块
@@ -76,6 +76,12 @@
         <dependency>
             <groupId>com.tracejp.yozu</groupId>
             <artifactId>yozu-common-swagger</artifactId>
+        </dependency>
+
+        <!-- api-member -->
+        <dependency>
+            <groupId>com.tracejp.yozu</groupId>
+            <artifactId>yozu-api-member</artifactId>
         </dependency>
 
     </dependencies>

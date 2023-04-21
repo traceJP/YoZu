@@ -20,4 +20,10 @@ public class ServiceNameConstants {
      * 文件服务的serviceid
      */
     public static final String FILE_SERVICE = "yozu-file";
+
+    /**
+     * 注册用户服务serviceid
+     */
+    public static final String MEMBER_SERVICE = "yozu-member";
+
 }

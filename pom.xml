@@ -206,6 +206,13 @@
                 <version>${yozu.version}</version>
             </dependency>
 
+            <!-- 注册用户接口 -->
+            <dependency>
+                <groupId>com.tracejp.yozu</groupId>
+                <artifactId>yozu-api-member</artifactId>
+                <version>${yozu.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
