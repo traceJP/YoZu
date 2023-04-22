@@ -58,4 +58,7 @@ public interface UmsMemberMapper {
      * @return 结果
      */
     int deleteUmsMemberByUserIds(Long[] userIds);
+
+    UmsMember getMemberByAccount(String account);
+
 }

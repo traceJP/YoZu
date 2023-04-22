@@ -2,8 +2,7 @@ package com.tracejp.yozu.member.domain;
 
 import com.tracejp.yozu.common.core.annotation.Excel;
 import com.tracejp.yozu.common.core.web.domain.BaseEntity;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.Data;
 
 /**
  * 用户信息对象 ums_member_oauth
@@ -11,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author tracejp
  * @date 2023-04-21
  */
+@Data
 public class UmsMemberOauth extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
@@ -43,59 +43,4 @@ public class UmsMemberOauth extends BaseEntity {
     @Excel(name = "社交数据【Json】")
     private String socialData;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setSocialId(String socialId) {
-        this.socialId = socialId;
-    }
-
-    public String getSocialId() {
-        return socialId;
-    }
-
-    public void setSocialType(String socialType) {
-        this.socialType = socialType;
-    }
-
-    public String getSocialType() {
-        return socialType;
-    }
-
-    public void setSocialData(String socialData) {
-        this.socialData = socialData;
-    }
-
-    public String getSocialData() {
-        return socialData;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("id", getId())
-                .append("userId", getUserId())
-                .append("socialId", getSocialId())
-                .append("socialType", getSocialType())
-                .append("socialData", getSocialData())
-                .append("createBy", getCreateBy())
-                .append("createTime", getCreateTime())
-                .append("updateBy", getUpdateBy())
-                .append("updateTime", getUpdateTime())
-                .append("remark", getRemark())
-                .toString();
-    }
 }

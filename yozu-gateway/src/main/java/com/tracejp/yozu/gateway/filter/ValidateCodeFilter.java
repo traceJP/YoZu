@@ -1,9 +1,11 @@
 package com.tracejp.yozu.gateway.filter;
 
-import java.nio.CharBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.atomic.AtomicReference;
-
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.tracejp.yozu.common.core.utils.ServletUtils;
+import com.tracejp.yozu.common.core.utils.StringUtils;
+import com.tracejp.yozu.gateway.config.properties.CaptchaProperties;
+import com.tracejp.yozu.gateway.service.ValidateCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -11,13 +13,11 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-import com.tracejp.yozu.common.core.utils.ServletUtils;
-import com.tracejp.yozu.common.core.utils.StringUtils;
-import com.tracejp.yozu.gateway.config.properties.CaptchaProperties;
-import com.tracejp.yozu.gateway.service.ValidateCodeService;
 import reactor.core.publisher.Flux;
+
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 验证码过滤器
@@ -26,7 +26,7 @@ import reactor.core.publisher.Flux;
  */
 @Component
 public class ValidateCodeFilter extends AbstractGatewayFilterFactory<Object> {
-    private final static String[] VALIDATE_URL = new String[]{"/auth/login", "/auth/register"};
+    private final static String[] VALIDATE_URL = new String[]{"/auth/login"};
 
     @Autowired
     private ValidateCodeService validateCodeService;
@@ -51,6 +51,12 @@ public class ValidateCodeFilter extends AbstractGatewayFilterFactory<Object> {
             try {
                 String rspStr = resolveBodyFromRequest(request);
                 JSONObject obj = JSON.parseObject(rspStr);
+
+                // 除系统登录外，不处理
+                if (!StringUtils.equals(obj.getString("type"), "SYSTEM_USER")) {
+                    return chain.filter(exchange);
+                }
+
                 validateCodeService.checkCaptcha(obj.getString(CODE), obj.getString(UUID));
             } catch (Exception e) {
                 return ServletUtils.webFluxResponseWriter(exchange.getResponse(), e.getMessage());

@@ -16,12 +16,12 @@ public class LoginBody {
     private String username;
 
     /**
-     * 手机号
+     * 手机号 - 账号
      */
     private String phone;
 
     /**
-     * 邮箱
+     * 邮箱 - 账号
      */
     private String email;
 

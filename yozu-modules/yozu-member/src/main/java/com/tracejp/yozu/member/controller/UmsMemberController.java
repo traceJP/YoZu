@@ -1,5 +1,9 @@
 package com.tracejp.yozu.member.controller;
 
+import com.tracejp.yozu.common.core.domain.R;
+import com.tracejp.yozu.common.core.enums.UserType;
+import com.tracejp.yozu.common.core.model.LoginUser;
+import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.core.utils.poi.ExcelUtil;
 import com.tracejp.yozu.common.core.web.controller.BaseController;
 import com.tracejp.yozu.common.core.web.domain.AjaxResult;
@@ -8,12 +12,16 @@ import com.tracejp.yozu.common.log.annotation.Log;
 import com.tracejp.yozu.common.log.enums.BusinessType;
 import com.tracejp.yozu.common.security.annotation.RequiresPermissions;
 import com.tracejp.yozu.member.api.domain.UmsMember;
+import com.tracejp.yozu.member.domain.UmsMemberRole;
+import com.tracejp.yozu.member.service.IUmsMemberRoleService;
 import com.tracejp.yozu.member.service.IUmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户信息Controller
@@ -26,6 +34,9 @@ import java.util.List;
 public class UmsMemberController extends BaseController {
     @Autowired
     private IUmsMemberService umsMemberService;
+
+    @Autowired
+    private IUmsMemberRoleService umsMemberRoleService;
 
     /**
      * 查询用户信息列表
@@ -89,6 +100,26 @@ public class UmsMemberController extends BaseController {
         return toAjax(umsMemberService.deleteUmsMemberByUserIds(userIds));
     }
 
-    // TODO 根据会员用户登录信息进行查询远程方法
+    @GetMapping("/info/{account}")
+    R<LoginUser> getMemberInfo(@PathVariable("account") String account) {
+        UmsMember member = umsMemberService.getMemberByAccount(account);
+        if (StringUtils.isNull(member)) {
+            return R.fail("用户名或密码错误");
+        }
+
+        LoginUser memberVo = new LoginUser();
+        memberVo.setUserInfo(member);
+        memberVo.setUserid(member.getUserId());
+        memberVo.setUsername(member.getUserName());
+        memberVo.setUserType(UserType.MEMBER_USER);
+
+        // 查询权限
+        UmsMemberRole role = umsMemberRoleService.selectUmsMemberRoleByRoleId(member.getRoleId());
+        Set<String> roles = new HashSet<>(1);
+        roles.add(role.getRoleKey());
+        memberVo.setRoles(roles);
+
+        return R.ok(memberVo);
+    }
 
 }

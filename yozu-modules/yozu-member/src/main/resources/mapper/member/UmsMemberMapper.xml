@@ -102,6 +102,11 @@
         where user_id = #{userId}
     </select>
 
+    <select id="getMemberByAccount" resultMap="UmsMemberResult">
+        <include refid="selectUmsMemberVo"/>
+        WHERE email = #{account} OR phonenumber = #{account}
+    </select>
+
     <insert id="insertUmsMember" parameterType="UmsMember" useGeneratedKeys="true"
             keyProperty="userId">
         insert into ums_member

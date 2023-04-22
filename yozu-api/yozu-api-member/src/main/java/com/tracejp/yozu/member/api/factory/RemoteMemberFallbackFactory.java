@@ -1,6 +1,9 @@
 package com.tracejp.yozu.member.api.factory;
 
+import com.tracejp.yozu.common.core.domain.R;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.member.api.RemoteMemberService;
+import com.tracejp.yozu.member.api.domain.UmsMember;
 
 /**
  * <p>  <p/>
@@ -10,5 +13,14 @@ import com.tracejp.yozu.member.api.RemoteMemberService;
  */
 public class RemoteMemberFallbackFactory implements RemoteMemberService {
 
+    @Override
+    public R<LoginUser> getMemberInfo(String account, String source) {
+        return null;
+    }
+
+    @Override
+    public R<Boolean> registerUserInfo(UmsMember umsMember, String source) {
+        return null;
+    }
 
 }

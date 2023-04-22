@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class LoginHandlerContext {
 
-    ConcurrentHashMap<LoginTypeEnum, ILoginService> loginServices = new ConcurrentHashMap<>(16);
+    private ConcurrentHashMap<LoginTypeEnum, ILoginService> loginServices = new ConcurrentHashMap<>(16);
 
     public LoginHandlerContext(ApplicationContext applicationContext) {
         // Add all login service

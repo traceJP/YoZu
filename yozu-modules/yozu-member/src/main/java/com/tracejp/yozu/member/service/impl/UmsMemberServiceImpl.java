@@ -87,4 +87,10 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
     public int deleteUmsMemberByUserId(Long userId) {
         return umsMemberMapper.deleteUmsMemberByUserId(userId);
     }
+
+    @Override
+    public UmsMember getMemberByAccount(String account) {
+        return umsMemberMapper.getMemberByAccount(account);
+    }
+
 }

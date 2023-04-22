@@ -58,4 +58,7 @@ public interface IUmsMemberService {
      * @return 结果
      */
     int deleteUmsMemberByUserId(Long userId);
+
+    UmsMember getMemberByAccount(String account);
+
 }
