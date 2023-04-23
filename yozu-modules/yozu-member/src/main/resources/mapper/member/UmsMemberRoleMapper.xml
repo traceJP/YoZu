@@ -54,6 +54,10 @@
         <include refid="selectUmsMemberRoleVo"/>
         where role_id = #{roleId}
     </select>
+    <select id="selectUmsMemberRoleByDefault" resultMap="UmsMemberRoleResult">
+        <include refid="selectUmsMemberRoleVo"/>
+        where default_status = 1
+    </select>
 
     <insert id="insertUmsMemberRole" parameterType="UmsMemberRole">
         insert into ums_member_role

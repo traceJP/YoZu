@@ -2,6 +2,8 @@ package com.tracejp.yozu.auth.form;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * <p>  <p/>
  *
@@ -11,8 +13,10 @@ import lombok.Data;
 @Data
 public class LoginAccountBody {
 
+    @NotBlank(message = "账号不能为空")
     private String account;
 
+    @NotBlank(message = "密码不能为空")
     private String password;
 
 }

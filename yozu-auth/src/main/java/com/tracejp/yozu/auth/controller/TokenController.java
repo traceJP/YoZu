@@ -2,10 +2,12 @@ package com.tracejp.yozu.auth.controller;
 
 import com.tracejp.yozu.auth.form.LoginAccountBody;
 import com.tracejp.yozu.auth.form.LoginBody;
+import com.tracejp.yozu.auth.form.LoginSmsBody;
 import com.tracejp.yozu.auth.form.RegisterBody;
 import com.tracejp.yozu.auth.service.SysLoginService;
 import com.tracejp.yozu.auth.service.SysRecordLogService;
 import com.tracejp.yozu.auth.service.UmsLoginService;
+import com.tracejp.yozu.auth.service.UmsRegisterService;
 import com.tracejp.yozu.common.core.constant.Constants;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.model.LoginUser;
@@ -39,6 +41,9 @@ public class TokenController {
     private UmsLoginService umsLoginService;
 
     @Autowired
+    private UmsRegisterService umsRegisterService;
+
+    @Autowired
     private SysRecordLogService recordLogService;
 
     /**
@@ -57,6 +62,13 @@ public class TokenController {
     @PostMapping("login/account")
     public R<?> loginByAccount(@RequestBody LoginAccountBody form) {
         LoginUser memberInfo = umsLoginService.loginByAccount(form);
+        // 获取登录token
+        return R.ok(tokenService.createToken(memberInfo));
+    }
+
+    @PostMapping("login/sms")
+    public R<?> loginBySms(@RequestBody LoginSmsBody form) {
+        LoginUser memberInfo = umsLoginService.loginBySms(form);
         // 获取登录token
         return R.ok(tokenService.createToken(memberInfo));
     }
@@ -87,8 +99,7 @@ public class TokenController {
 
     @PostMapping("register")
     public R<?> register(@RequestBody RegisterBody registerBody) {
-        // 用户注册 单独抽离一个类出来注册
-        // sysLoginService.register(registerBody);
+        umsRegisterService.register(registerBody);
         return R.ok();
     }
 }

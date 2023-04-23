@@ -1,6 +1,7 @@
 package com.tracejp.yozu.auth.service;
 
 import com.tracejp.yozu.auth.form.LoginAccountBody;
+import com.tracejp.yozu.auth.form.LoginSmsBody;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.exception.ServiceException;
@@ -42,4 +43,16 @@ public class UmsLoginService extends AbsLoginService {
         return userInfo;
     }
 
+    public LoginUser loginBySms(LoginSmsBody form) {
+
+        // TODO 短信判断
+
+        R<LoginUser> memberResult = remoteMemberService.getMemberInfoOrRegister(form.getPhone(), SecurityConstants.INNER);
+        if (StringUtils.isNull(memberResult)
+                || StringUtils.isNull(memberResult.getData())
+                || R.FAIL == memberResult.getCode()) {
+            throw new ServiceException(memberResult.getMsg());
+        }
+        return memberResult.getData();
+    }
 }

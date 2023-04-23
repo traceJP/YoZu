@@ -19,7 +19,12 @@ public class RemoteMemberFallbackFactory implements RemoteMemberService {
     }
 
     @Override
-    public R<Boolean> registerUserInfo(UmsMember umsMember, String source) {
+    public R<LoginUser> getMemberInfoOrRegister(String phone, String source) {
+        return null;
+    }
+
+    @Override
+    public R<Boolean> registerMemberInfo(UmsMember umsMember, String source) {
         return null;
     }
 

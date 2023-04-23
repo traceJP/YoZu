@@ -1,7 +1,6 @@
 package com.tracejp.yozu.member.controller;
 
 import com.tracejp.yozu.common.core.domain.R;
-import com.tracejp.yozu.common.core.enums.UserType;
 import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.core.utils.poi.ExcelUtil;
@@ -12,16 +11,13 @@ import com.tracejp.yozu.common.log.annotation.Log;
 import com.tracejp.yozu.common.log.enums.BusinessType;
 import com.tracejp.yozu.common.security.annotation.RequiresPermissions;
 import com.tracejp.yozu.member.api.domain.UmsMember;
-import com.tracejp.yozu.member.domain.UmsMemberRole;
 import com.tracejp.yozu.member.service.IUmsMemberRoleService;
 import com.tracejp.yozu.member.service.IUmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 用户信息Controller
@@ -106,20 +102,19 @@ public class UmsMemberController extends BaseController {
         if (StringUtils.isNull(member)) {
             return R.fail("用户名或密码错误");
         }
-
-        LoginUser memberVo = new LoginUser();
-        memberVo.setUserInfo(member);
-        memberVo.setUserid(member.getUserId());
-        memberVo.setUsername(member.getUserName());
-        memberVo.setUserType(UserType.MEMBER_USER);
-
-        // 查询权限
-        UmsMemberRole role = umsMemberRoleService.selectUmsMemberRoleByRoleId(member.getRoleId());
-        Set<String> roles = new HashSet<>(1);
-        roles.add(role.getRoleKey());
-        memberVo.setRoles(roles);
-
+        LoginUser memberVo = umsMemberService.convertToLoginUser(member);
         return R.ok(memberVo);
+    }
+
+    @GetMapping("/infoOrRegister/{phone}")
+    R<LoginUser> getMemberInfoOrRegister(@PathVariable("phone") String phone) {
+        LoginUser memberVo = umsMemberService.getMemberOrRegister(phone);
+        return R.ok(memberVo);
+    }
+
+    @PostMapping("/register/email")
+    R<Boolean> registerMemberInfoByEmail(@RequestBody UmsMember umsMember) {
+        return R.ok(umsMemberService.registerMemberByEmail(umsMember));
     }
 
 }

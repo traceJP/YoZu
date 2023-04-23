@@ -1,13 +1,25 @@
 package com.tracejp.yozu.member.service.impl;
 
+import com.tracejp.yozu.common.core.enums.UserStatus;
+import com.tracejp.yozu.common.core.enums.UserType;
+import com.tracejp.yozu.common.core.exception.ServiceException;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.DateUtils;
+import com.tracejp.yozu.common.core.utils.StringUtils;
+import com.tracejp.yozu.common.core.utils.bean.BeanUtils;
+import com.tracejp.yozu.common.core.utils.uuid.UUID;
+import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import com.tracejp.yozu.member.api.domain.UmsMember;
+import com.tracejp.yozu.member.domain.UmsMemberRole;
 import com.tracejp.yozu.member.mapper.UmsMemberMapper;
+import com.tracejp.yozu.member.mapper.UmsMemberRoleMapper;
 import com.tracejp.yozu.member.service.IUmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户信息Service业务层处理
@@ -19,6 +31,9 @@ import java.util.List;
 public class UmsMemberServiceImpl implements IUmsMemberService {
     @Autowired
     private UmsMemberMapper umsMemberMapper;
+
+    @Autowired
+    private UmsMemberRoleMapper umsMemberRoleMapper;
 
     /**
      * 查询用户信息
@@ -91,6 +106,75 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
     @Override
     public UmsMember getMemberByAccount(String account) {
         return umsMemberMapper.getMemberByAccount(account);
+    }
+
+    @Override
+    public LoginUser convertToLoginUser(UmsMember member) {
+        LoginUser memberVo = new LoginUser();
+        memberVo.setUserInfo(member);
+        memberVo.setUserid(member.getUserId());
+        memberVo.setUsername(member.getUserName());
+        memberVo.setUserType(UserType.MEMBER_USER);
+
+        // 查询权限
+        UmsMemberRole role = umsMemberRoleMapper.selectUmsMemberRoleByRoleId(member.getRoleId());
+        Set<String> roles = new HashSet<>(1);
+        roles.add(role.getRoleKey());
+        memberVo.setRoles(roles);
+
+        return memberVo;
+    }
+
+    @Override
+    public LoginUser getMemberOrRegister(String phone) {
+        UmsMember member = getMemberByAccount(phone);
+        if (StringUtils.isNotNull(member)) {
+            return convertToLoginUser(member);
+        }
+
+        UmsMember register = new UmsMember();
+        register.setPhonenumber(phone);
+        BeanUtils.copyBeanProp(register, getBaseMemberInfo());
+        int count = umsMemberMapper.insertUmsMember(register);
+        if (count <= 0) {
+            throw new ServiceException("注册失败，手机号码已存在");
+        }
+
+        UmsMember newMember = getMemberByAccount(phone);
+        return convertToLoginUser(newMember);
+    }
+
+    @Override
+    public boolean registerMemberByEmail(UmsMember umsMember) {
+        UmsMember register = new UmsMember();
+        BeanUtils.copyBeanProp(register, getBaseMemberInfo());
+
+        // 检查邮箱是否唯一
+        checkEmailUnique(umsMember.getEmail());
+
+        // 密码加密
+        String encodePassword = SecurityUtils.encryptPassword(umsMember.getPassword());
+        umsMember.setPassword(encodePassword);
+
+        return umsMemberMapper.insertUmsMember(register) > 0;
+    }
+
+    @Override
+    public void checkEmailUnique(String email) {
+        UmsMember member = getMemberByAccount(email);
+        if (member != null) {
+            throw new ServiceException("邮箱已存在");
+        }
+    }
+
+    private UmsMember getBaseMemberInfo() {
+        UmsMember member = new UmsMember();
+        UmsMemberRole role = umsMemberRoleMapper.selectUmsMemberRoleByDefault();
+        member.setRoleId(role.getRoleId());
+        member.setUserName(UUID.randomUUID().toString(true));
+        member.setStatus(UserStatus.OK.getCode());
+        member.setCreateTime(DateUtils.getNowDate());
+        return member;
     }
 
 }

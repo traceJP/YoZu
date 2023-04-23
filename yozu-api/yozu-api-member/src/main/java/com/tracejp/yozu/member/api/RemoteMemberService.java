@@ -25,20 +25,23 @@ public interface RemoteMemberService {
     @GetMapping("/member/info/{account}")
     R<LoginUser> getMemberInfo(@PathVariable("account") String account, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
 
-    // TODO 短信登录接口   getMemberInfoOrRegister
-    // 短信登录 先拿到手机号，1 检查是否存在   2检查验证码是否匹配
-    // 1 发送验证码
-    // 2 用户拿到验证码， 提交手机号和验证码
-    // 3 auth服务检查验证码和手机号redis匹配
-    // 4 如果匹配 就去member服务拿用户信息，如果不存在就创建用户
+    /**
+     * 通过手机号获取用户信息，如果不存在就注册
+     * @param phone 手机号
+     * @param source 请求来源
+     * @return 结果
+     */
+    @GetMapping("/member/infoOrRegister/{phone}")
+    R<LoginUser> getMemberInfoOrRegister(@PathVariable("phone") String phone, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
 
     /**
      * 注册用户信息
      *
-     * @param umsMember 用户信息
+     * @param umsMember 用户信息 邮箱 密码
      * @param source  请求来源
      * @return 结果
      */
-    @PostMapping("/user/register")
-    R<Boolean> registerUserInfo(@RequestBody UmsMember umsMember, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    @PostMapping("/member/register/email")
+    R<Boolean> registerMemberInfo(@RequestBody UmsMember umsMember, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+
 }
