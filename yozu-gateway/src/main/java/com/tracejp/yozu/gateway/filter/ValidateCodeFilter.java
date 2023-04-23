@@ -17,6 +17,7 @@ import reactor.core.publisher.Flux;
 
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -44,18 +45,13 @@ public class ValidateCodeFilter extends AbstractGatewayFilterFactory<Object> {
             ServerHttpRequest request = exchange.getRequest();
 
             // 非登录/注册请求或验证码关闭，不处理
-            if (!StringUtils.containsAnyIgnoreCase(request.getURI().getPath(), VALIDATE_URL) || !captchaProperties.getEnabled()) {
+            if (!StringUtils.matches(request.getURI().getPath(), Arrays.asList(VALIDATE_URL)) || !captchaProperties.getEnabled()) {
                 return chain.filter(exchange);
             }
 
             try {
                 String rspStr = resolveBodyFromRequest(request);
                 JSONObject obj = JSON.parseObject(rspStr);
-
-                // 除系统登录外，不处理
-                if (!StringUtils.equals(obj.getString("type"), "SYSTEM_USER")) {
-                    return chain.filter(exchange);
-                }
 
                 validateCodeService.checkCaptcha(obj.getString(CODE), obj.getString(UUID));
             } catch (Exception e) {

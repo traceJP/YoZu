@@ -1,10 +1,11 @@
 package com.tracejp.yozu.auth.controller;
 
+import com.tracejp.yozu.auth.form.LoginAccountBody;
 import com.tracejp.yozu.auth.form.LoginBody;
 import com.tracejp.yozu.auth.form.RegisterBody;
-import com.tracejp.yozu.auth.form.constant.LoginTypeEnum;
-import com.tracejp.yozu.auth.handler.LoginHandlerContext;
+import com.tracejp.yozu.auth.service.SysLoginService;
 import com.tracejp.yozu.auth.service.SysRecordLogService;
+import com.tracejp.yozu.auth.service.UmsLoginService;
 import com.tracejp.yozu.common.core.constant.Constants;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.model.LoginUser;
@@ -32,21 +33,32 @@ public class TokenController {
     private TokenService tokenService;
 
     @Autowired
-    LoginHandlerContext loginService;
+    private SysLoginService sysLoginService;
+
+    @Autowired
+    private UmsLoginService umsLoginService;
 
     @Autowired
     private SysRecordLogService recordLogService;
 
+    /**
+     * 系统登录接口
+     */
     @PostMapping("login")
     public R<?> login(@RequestBody LoginBody form) {
-        // 用户登录
-        LoginTypeEnum loginType = form.getType();
-        if (loginType == null) {
-            loginType = LoginTypeEnum.SYSTEM_USER;
-        }
-        LoginUser userInfo = loginService.login(form, loginType);
+        LoginUser userInfo = sysLoginService.login(form);
         // 获取登录token
         return R.ok(tokenService.createToken(userInfo));
+    }
+
+    /********************************************************************************
+     * 注册会员用户登录接口
+     ********************************************************************************/
+    @PostMapping("login/account")
+    public R<?> loginByAccount(@RequestBody LoginAccountBody form) {
+        LoginUser memberInfo = umsLoginService.loginByAccount(form);
+        // 获取登录token
+        return R.ok(tokenService.createToken(memberInfo));
     }
 
     @DeleteMapping("logout")

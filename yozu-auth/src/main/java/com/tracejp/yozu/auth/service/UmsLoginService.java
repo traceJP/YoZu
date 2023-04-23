@@ -1,7 +1,6 @@
 package com.tracejp.yozu.auth.service;
 
-import com.tracejp.yozu.auth.form.LoginBody;
-import com.tracejp.yozu.auth.form.constant.LoginTypeEnum;
+import com.tracejp.yozu.auth.form.LoginAccountBody;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.exception.ServiceException;
@@ -13,36 +12,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>  <p/>
+ * <p> 注册用户登录校验方法 <p/>
  *
  * @author traceJP
- * @since 2023/4/22 18:53
+ * @since 2023/4/23 15:48
  */
 @Component
-public class UmsAccountLoginService implements ILoginService {
+public class UmsLoginService extends AbsLoginService {
 
     @Autowired
     private RemoteMemberService remoteMemberService;
 
-    @Override
-    public LoginUser login(LoginBody form) {
-        String account = null;
-        if (StringUtils.isNotEmpty(form.getPhone())) {
-            account = form.getPhone();
-        } else if (StringUtils.isNotEmpty(form.getEmail())) {
-            account = form.getEmail();
-        } else {
-            throw new ServiceException("用户名或密码错误");
-        }
 
-        R<LoginUser> memberResult = remoteMemberService.getMemberInfo(account, SecurityConstants.INNER);
+    public LoginUser loginByAccount(LoginAccountBody form) {
+
+        R<LoginUser> memberResult = remoteMemberService.getMemberInfo(form.getAccount(), SecurityConstants.INNER);
         if (StringUtils.isNull(memberResult) || StringUtils.isNull(memberResult.getData())) {
             throw new ServiceException("用户名或密码错误");
         }
         if (R.FAIL == memberResult.getCode()) {
             throw new ServiceException(memberResult.getMsg());
         }
-
         LoginUser userInfo = memberResult.getData();
         UmsMember memberInfo = userInfo.getUserInfo(UmsMember.class);
 
@@ -50,11 +40,6 @@ public class UmsAccountLoginService implements ILoginService {
         matchesPassword(form.getPassword(), memberInfo.getPassword());
 
         return userInfo;
-    }
-
-    @Override
-    public LoginTypeEnum getLoginType() {
-        return LoginTypeEnum.MEMBER_USER_ACCOUNT;
     }
 
 }

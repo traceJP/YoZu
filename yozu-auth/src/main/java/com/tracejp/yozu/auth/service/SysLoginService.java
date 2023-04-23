@@ -1,7 +1,6 @@
 package com.tracejp.yozu.auth.service;
 
 import com.tracejp.yozu.auth.form.LoginBody;
-import com.tracejp.yozu.auth.form.constant.LoginTypeEnum;
 import com.tracejp.yozu.common.core.constant.CacheConstants;
 import com.tracejp.yozu.common.core.constant.Constants;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
@@ -25,7 +24,8 @@ import org.springframework.stereotype.Component;
  * @author yozu
  */
 @Component
-public class SysLoginService implements ILoginService {
+public class SysLoginService {
+
     @Autowired
     private RemoteUserService remoteUserService;
 
@@ -39,7 +39,6 @@ public class SysLoginService implements ILoginService {
     private RedisService redisService;
 
 
-    @Override
     public LoginUser login(LoginBody form) {
         String username = form.getUsername();
         String password = form.getPassword();
@@ -92,11 +91,6 @@ public class SysLoginService implements ILoginService {
         passwordService.validate(user, password);
         recordLogService.recordLogininfor(username, Constants.LOGIN_SUCCESS, "登录成功");
         return userInfo;
-    }
-
-    @Override
-    public LoginTypeEnum getLoginType() {
-        return LoginTypeEnum.SYSTEM_USER;
     }
 
 }
