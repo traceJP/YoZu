@@ -213,6 +213,13 @@
                 <version>${yozu.version}</version>
             </dependency>
 
+            <!-- 第三方服务接口 -->
+            <dependency>
+                <groupId>com.tracejp.yozu</groupId>
+                <artifactId>yozu-api-thirdparty</artifactId>
+                <version>${yozu.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

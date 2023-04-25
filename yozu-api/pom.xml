@@ -11,6 +11,7 @@
     <modules>
         <module>yozu-api-system</module>
         <module>yozu-api-member</module>
+        <module>yozu-api-thirdparty</module>
     </modules>
 
     <artifactId>yozu-api</artifactId>

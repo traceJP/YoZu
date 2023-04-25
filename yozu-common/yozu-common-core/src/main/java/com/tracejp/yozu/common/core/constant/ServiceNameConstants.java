@@ -26,4 +26,9 @@ public class ServiceNameConstants {
      */
     public static final String MEMBER_SERVICE = "yozu-member";
 
+    /**
+     * 第三方服务serviceid
+     */
+    public static final String THIRDPARTY_SERVICE = "yozu-thirdparty";
+
 }

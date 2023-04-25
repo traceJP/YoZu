@@ -14,6 +14,7 @@
         <module>yozu-job</module>
         <module>yozu-file</module>
         <module>yozu-member</module>
+        <module>yozu-thirdparty</module>
     </modules>
 
     <artifactId>yozu-modules</artifactId>

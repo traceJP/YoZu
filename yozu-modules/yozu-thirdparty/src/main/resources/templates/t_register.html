@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册邮件模板</title>
+    <!--/* 参数表 */-->
+    <!--/* url：激活链接 */-->
+</head>
+<body>
+    <div>
+        <h1>欢迎注册</h1>
+        <p>请点击下面的链接激活账号</p>
+        <a th:href="${url}" th:text="${url}">http://localhost:8080/auth/login/email/active?code=${code}</a>
+    </div>
+</body>
+</html>
