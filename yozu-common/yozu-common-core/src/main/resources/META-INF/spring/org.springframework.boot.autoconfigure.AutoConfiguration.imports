@@ -1,1 +1,2 @@
 com.tracejp.yozu.common.core.utils.SpringUtils
+com.tracejp.yozu.common.core.pool.YoZuThreadPool

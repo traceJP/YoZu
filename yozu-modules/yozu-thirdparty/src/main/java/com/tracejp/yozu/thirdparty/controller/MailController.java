@@ -1,8 +1,9 @@
 package com.tracejp.yozu.thirdparty.controller;
 
-import com.tracejp.yozu.api.thirdparty.domain.param.MailMessageParam;
+import com.tracejp.yozu.api.thirdparty.domain.MailMessage;
 import com.tracejp.yozu.common.core.domain.R;
-import com.tracejp.yozu.thirdparty.component.MailComponent;
+import com.tracejp.yozu.common.security.annotation.InnerAuth;
+import com.tracejp.yozu.thirdparty.handler.mail.IMailHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,12 +23,13 @@ import javax.mail.MessagingException;
 public class MailController {
 
     @Autowired
-    private MailComponent mailComponent;
+    private IMailHandler mailHandler;
 
+    @InnerAuth
     @PostMapping("/send")
-    public R<?> send(@RequestBody MailMessageParam param) {
+    public R<?> send(@RequestBody MailMessage message) {
         try {
-            mailComponent.send(param);
+            mailHandler.send(message);
         } catch (MessagingException e) {
             return R.fail();
         }

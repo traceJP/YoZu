@@ -72,6 +72,13 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <!-- ali-sms -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibabacloud-dysmsapi20170525</artifactId>
+            <version>2.0.23</version>
+        </dependency>
+
         <!-- api-thirdparty -->
         <dependency>
             <groupId>com.tracejp.yozu</groupId>

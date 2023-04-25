@@ -1,4 +1,4 @@
-package com.tracejp.yozu.api.thirdparty.domain.param;
+package com.tracejp.yozu.api.thirdparty.domain;
 
 import com.tracejp.yozu.api.thirdparty.enums.MailTemplateEnum;
 import lombok.AllArgsConstructor;
@@ -7,12 +7,10 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 /**
- * <p>  <p/>
+ * <p> 邮件消息实体 <p/>
  *
  * @author traceJP
  * @since 2023/4/24 21:10
@@ -20,13 +18,13 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MailMessageParam {
+public class MailMessage {
 
     /**
-     * 接收者
+     * 接收者邮箱号（多个参数以分号;分割）
      */
     @NotEmpty
-    private List<String> tos;
+    private String emails;
 
     /**
      * 邮件模板
@@ -38,11 +36,5 @@ public class MailMessageParam {
      * 模板参数
      */
     private Map<String, Object> params;
-
-    public MailMessageParam(String to, MailTemplateEnum template, Map<String, Object> params) {
-        this.tos = Collections.singletonList(to);
-        this.template = template;
-        this.params = params;
-    }
 
 }

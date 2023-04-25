@@ -1,6 +1,6 @@
-package com.tracejp.yozu.thirdparty.component;
+package com.tracejp.yozu.thirdparty.handler.mail;
 
-import com.tracejp.yozu.api.thirdparty.domain.param.MailMessageParam;
+import com.tracejp.yozu.api.thirdparty.domain.MailMessage;
 import com.tracejp.yozu.api.thirdparty.enums.MailTemplateEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,15 +13,17 @@ import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * <p>  <p/>
+ * <p> JavaMailHandler实现类 <p/>
  *
  * @author traceJP
- * @since 2023/4/24 19:59
+ * @since 2023/4/25 15:56
  */
 @Component
-public class MailComponent {
+public class JavaMailHandler implements IMailHandler {
 
     @Autowired
     private JavaMailSender mailSender;
@@ -29,24 +31,28 @@ public class MailComponent {
     @Autowired
     private TemplateEngine templateEngine;
 
+    @Autowired
+    private ThreadPoolExecutor threadPoolExecutor;
+
     @Value("${spring.mail.username}")
     private String username;
 
-    public void send(MailMessageParam param) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
+    @Override
+    public void send(MailMessage message) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         helper.setFrom(username);
-        helper.setTo(param.getTos().toArray(new String[0]));
+        helper.setTo(message.getEmails().split(";"));
 
         // 模板填充
-        MailTemplateEnum template = param.getTemplate();
+        MailTemplateEnum template = message.getTemplate();
         helper.setSubject(template.getSubject());
-        Context context = new Context(Locale.CHINA, param.getParams());
+        Context context = new Context(Locale.CHINA, message.getParams());
         String process = templateEngine.process(template.getTemplate(), context);
         helper.setText(process);
 
         // 发送邮件
-        mailSender.send(message);
+        CompletableFuture.runAsync(() -> mailSender.send(mimeMessage), threadPoolExecutor);
     }
 
 }

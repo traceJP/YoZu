@@ -66,6 +66,8 @@ public class TokenController {
         return R.ok(tokenService.createToken(memberInfo));
     }
 
+    // TODO 邮箱验证接口  邮箱激活接口
+
     @PostMapping("login/sms")
     public R<?> loginBySms(@RequestBody LoginSmsBody form) {
         LoginUser memberInfo = umsLoginService.loginBySms(form);
