@@ -2,6 +2,7 @@ package com.tracejp.yozu.thirdparty.handler.mail;
 
 import com.tracejp.yozu.api.thirdparty.domain.MailMessage;
 import com.tracejp.yozu.api.thirdparty.enums.MailTemplateEnum;
+import com.tracejp.yozu.common.core.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -43,16 +44,20 @@ public class JavaMailHandler implements IMailHandler {
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         helper.setFrom(username);
         helper.setTo(message.getEmails().split(";"));
-
-        // 模板填充
-        MailTemplateEnum template = message.getTemplate();
-        helper.setSubject(template.getSubject());
-        Context context = new Context(Locale.CHINA, message.getParams());
-        String process = templateEngine.process(template.getTemplate(), context);
-        helper.setText(process);
-
-        // 发送邮件
-        CompletableFuture.runAsync(() -> mailSender.send(mimeMessage), threadPoolExecutor);
+        CompletableFuture.runAsync(() -> {
+            // 模板填充
+            MailTemplateEnum template = message.getTemplate();
+            try {
+                helper.setSubject(template.getSubject());
+                Context context = new Context(Locale.CHINA, message.getParams());
+                String process = templateEngine.process(template.getTemplate(), context);
+                helper.setText(process);
+            } catch (MessagingException e) {
+                throw new ServiceException("邮件模板解析失败：" + e);
+            }
+            // 发送邮件
+            mailSender.send(mimeMessage);
+        }, threadPoolExecutor);
     }
 
 }

@@ -55,4 +55,11 @@ public class CacheConstants {
      * 登录IP黑名单 cache key
      */
     public static final String SYS_LOGIN_BLACKIPLIST = SYS_CONFIG_KEY + "sys.login.blackIPList";
+
+    /**
+     * 注册邮箱激活码 redis key
+     */
+    public static final String EMAIL_ACTIVE_CODE_KEY = "email_active_codes:";
+
+
 }

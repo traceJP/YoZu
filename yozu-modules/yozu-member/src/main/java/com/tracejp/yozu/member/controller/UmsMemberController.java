@@ -114,7 +114,12 @@ public class UmsMemberController extends BaseController {
 
     @PostMapping("/register/email")
     R<Boolean> registerMemberInfoByEmail(@RequestBody UmsMember umsMember) {
-        return R.ok(umsMemberService.registerMemberByEmail(umsMember));
+        try {
+            umsMemberService.registerMemberByEmail(umsMember);
+        } catch (Exception e) {
+            return R.fail(e.getMessage());
+        }
+        return R.ok();
     }
 
 }

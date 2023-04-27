@@ -17,10 +17,7 @@ import com.tracejp.yozu.common.security.auth.AuthUtil;
 import com.tracejp.yozu.common.security.service.TokenService;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -66,8 +63,6 @@ public class TokenController {
         return R.ok(tokenService.createToken(memberInfo));
     }
 
-    // TODO 邮箱验证接口  邮箱激活接口
-
     @PostMapping("login/sms")
     public R<?> loginBySms(@RequestBody LoginSmsBody form) {
         LoginUser memberInfo = umsLoginService.loginBySms(form);
@@ -104,4 +99,17 @@ public class TokenController {
         umsRegisterService.register(registerBody);
         return R.ok();
     }
+
+    @GetMapping("register/active")
+    public R<?> registerMailActive(@RequestParam("email") String email, @RequestParam("code") String code) {
+        umsRegisterService.emailActiveConfirm(email, code);
+        return R.ok();
+    }
+
+    @GetMapping("register/verify/{email}")
+    public R<?> sendRegisterMail(@PathVariable String email) {
+        umsRegisterService.sendActiveEmail(email);
+        return R.ok();
+    }
+
 }

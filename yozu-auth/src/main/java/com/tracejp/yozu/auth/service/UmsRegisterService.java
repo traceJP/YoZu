@@ -1,14 +1,28 @@
 package com.tracejp.yozu.auth.service;
 
+import com.tracejp.yozu.api.thirdparty.RemoteThirdpartyService;
+import com.tracejp.yozu.api.thirdparty.constant.MailTemplateParamConstants;
+import com.tracejp.yozu.api.thirdparty.domain.MailMessage;
+import com.tracejp.yozu.api.thirdparty.enums.MailTemplateEnum;
+import com.tracejp.yozu.auth.constant.LoginEmailConstants;
+import com.tracejp.yozu.auth.domain.dto.EmailActiveRedisDTO;
 import com.tracejp.yozu.auth.form.RegisterBody;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.exception.ServiceException;
 import com.tracejp.yozu.common.core.utils.StringUtils;
+import com.tracejp.yozu.common.core.utils.uuid.UUID;
+import com.tracejp.yozu.common.redis.service.RedisService;
 import com.tracejp.yozu.member.api.RemoteMemberService;
 import com.tracejp.yozu.member.api.domain.UmsMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static com.tracejp.yozu.common.core.constant.CacheConstants.EMAIL_ACTIVE_CODE_KEY;
 
 /**
  * <p> 会员注册服务 <p/>
@@ -22,24 +36,93 @@ public class UmsRegisterService {
     @Autowired
     private RemoteMemberService remoteMemberService;
 
-    public void register(RegisterBody form) {
+    @Autowired
+    private RemoteThirdpartyService remoteThirdpartyService;
 
+    @Autowired
+    private RedisService redisService;
+
+
+    public void register(RegisterBody form) {
         if (!StringUtils.equals(form.getPassword(), form.getConfirmPassword())) {
             throw new ServiceException("两次密码不一致");
         }
-        // 密码强度检查 => 数字 + 字母
-        String regex = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
-        if (!form.getPassword().matches(regex)) {
-            throw new ServiceException("密码强度不够");
+
+        String redisKey = EMAIL_ACTIVE_CODE_KEY + form.getEmail();
+        EmailActiveRedisDTO active = (EmailActiveRedisDTO) redisService.getCacheObject(redisKey);
+        if (active == null) {
+            throw new ServiceException("邮箱激活链接已过期");
+        }
+        if (!active.getActive()) {
+            throw new ServiceException("未通过邮箱验证");
         }
 
+        // 删除缓存
+        redisService.deleteObject(redisKey);
+
+        // 注册
         UmsMember member = new UmsMember();
         member.setEmail(form.getEmail());
         member.setPassword(form.getPassword());
         R<Boolean> register = remoteMemberService.registerMemberInfo(member, SecurityConstants.INNER);
         if (R.FAIL == register.getCode()) {
-            throw new ServiceException("注册失败");
+            throw new ServiceException(register.getMsg());
         }
+    }
+
+    public void emailActiveConfirm(String email, String code) {
+        String redisKey = EMAIL_ACTIVE_CODE_KEY + email;
+        EmailActiveRedisDTO active = (EmailActiveRedisDTO) redisService.getCacheObject(redisKey);
+        if (active == null) {
+            throw new ServiceException("邮箱激活链接已过期");
+        }
+        if (!StringUtils.equals(active.getCode(), code)) {
+            throw new ServiceException("邮箱激活码错误");
+        }
+        if (active.getActive()) {
+            throw new ServiceException("邮箱已激活");
+        }
+
+        // 激活
+        active.setActive(true);
+        active.setSendTime(System.currentTimeMillis());
+        redisService.setCacheObject(
+                redisKey,
+                active,
+                LoginEmailConstants.EMAIL_ACTIVE_CODE_EXPIRE,
+                TimeUnit.MILLISECONDS
+        );
+
+    }
+
+    public void sendActiveEmail(String email) {
+        String redisKey = EMAIL_ACTIVE_CODE_KEY + email;
+
+        // 防刷验证
+        long currentTime = System.currentTimeMillis();
+        EmailActiveRedisDTO active = (EmailActiveRedisDTO) redisService.getCacheObject(redisKey);
+        if (active != null && currentTime - active.getSendTime() < LoginEmailConstants.EMAIL_CODE_REPEAT_EXPIRE) {
+            throw new ServiceException("请勿频繁发送邮件");
+        }
+
+        // 保存激活码
+        String code = UUID.fastUUID().toString(true);
+        redisService.setCacheObject(
+                redisKey,
+                new EmailActiveRedisDTO(code, false, currentTime),
+                LoginEmailConstants.EMAIL_ACTIVE_CODE_EXPIRE,
+                TimeUnit.MILLISECONDS
+        );
+
+        // 邮件发送
+        MailMessage mailMessage = new MailMessage();
+        mailMessage.setEmails(email);
+        mailMessage.setTemplate(MailTemplateEnum.REGISTER_TEMPLATE);
+        Map<String, Object> params = new HashMap<>();
+        params.put(MailTemplateParamConstants.REGISTER_MAIL, email);
+        params.put(MailTemplateParamConstants.REGISTER_CODE, code);
+        mailMessage.setParams(params);
+        remoteThirdpartyService.sendMail(mailMessage, SecurityConstants.INNER);
     }
 
 }

@@ -6,7 +6,6 @@ import com.tracejp.yozu.common.core.exception.ServiceException;
 import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.DateUtils;
 import com.tracejp.yozu.common.core.utils.StringUtils;
-import com.tracejp.yozu.common.core.utils.bean.BeanUtils;
 import com.tracejp.yozu.common.core.utils.uuid.UUID;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import com.tracejp.yozu.member.api.domain.UmsMember;
@@ -132,10 +131,9 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
             return convertToLoginUser(member);
         }
 
-        UmsMember register = new UmsMember();
-        register.setPhonenumber(phone);
-        BeanUtils.copyBeanProp(register, getBaseMemberInfo());
-        int count = umsMemberMapper.insertUmsMember(register);
+        UmsMember insert = setBaseMemberInfo(new UmsMember());
+        insert.setPhonenumber(phone);
+        int count = umsMemberMapper.insertUmsMember(insert);
         if (count <= 0) {
             throw new ServiceException("注册失败，手机号码已存在");
         }
@@ -146,9 +144,6 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
 
     @Override
     public boolean registerMemberByEmail(UmsMember umsMember) {
-        UmsMember register = new UmsMember();
-        BeanUtils.copyBeanProp(register, getBaseMemberInfo());
-
         // 检查邮箱是否唯一
         checkEmailUnique(umsMember.getEmail());
 
@@ -156,7 +151,8 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
         String encodePassword = SecurityUtils.encryptPassword(umsMember.getPassword());
         umsMember.setPassword(encodePassword);
 
-        return umsMemberMapper.insertUmsMember(register) > 0;
+        UmsMember member = setBaseMemberInfo(umsMember);
+        return umsMemberMapper.insertUmsMember(member) > 0;
     }
 
     @Override
@@ -167,8 +163,7 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
         }
     }
 
-    private UmsMember getBaseMemberInfo() {
-        UmsMember member = new UmsMember();
+    private UmsMember setBaseMemberInfo(UmsMember member) {
         UmsMemberRole role = umsMemberRoleMapper.selectUmsMemberRoleByDefault();
         member.setRoleId(role.getRoleId());
         member.setUserName(UUID.randomUUID().toString(true));
