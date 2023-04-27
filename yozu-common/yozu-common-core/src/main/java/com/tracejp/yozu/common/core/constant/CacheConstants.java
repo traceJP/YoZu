@@ -59,7 +59,11 @@ public class CacheConstants {
     /**
      * 注册邮箱激活码 redis key
      */
-    public static final String EMAIL_ACTIVE_CODE_KEY = "email_active_codes:";
+    public static final String AUTH_EMAIL_ACTIVE_CODE_KEY = "auth_email_code:";
 
+    /**
+     * 短信验证码 redis key
+     */
+    public static final String AUTH_SMS_CAPTCHA_KEY = "auth_sms_captcha:";
 
 }

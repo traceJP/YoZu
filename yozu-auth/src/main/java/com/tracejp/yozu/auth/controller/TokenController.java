@@ -70,6 +70,12 @@ public class TokenController {
         return R.ok(tokenService.createToken(memberInfo));
     }
 
+    @GetMapping("/login/sms/verify/{phone}")
+    public R<?> sendSmsCaptcha(@PathVariable String phone) {
+        umsLoginService.sendSmsCaptcha(phone);
+        return R.ok();
+    }
+
     @DeleteMapping("logout")
     public R<?> logout(HttpServletRequest request) {
         String token = SecurityUtils.getToken(request);

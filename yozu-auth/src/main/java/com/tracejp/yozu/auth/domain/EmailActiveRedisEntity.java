@@ -1,11 +1,11 @@
-package com.tracejp.yozu.auth.domain.dto;
+package com.tracejp.yozu.auth.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * <p> 邮件激活Redis DTO <p/>
+ * <p> 邮件激活RedisEntity <p/>
  *
  * @author traceJP
  * @since 2023/4/26 17:05
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailActiveRedisDTO {
+public class EmailActiveRedisEntity {
 
     /**
      * 邮箱激活链接UUID
