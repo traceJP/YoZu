@@ -2,6 +2,8 @@ package com.tracejp.yozu.member.service;
 
 import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.member.api.domain.UmsMember;
+import com.tracejp.yozu.member.api.domain.dto.UmsMemberDTO;
+import com.tracejp.yozu.member.api.enums.SocialTypeEnum;
 
 import java.util.List;
 
@@ -68,6 +70,14 @@ public interface IUmsMemberService {
     UmsMember getMemberByAccount(String account);
 
     /**
+     * 获取用户信息通过社交账号
+     * @param socialCode 社交账号
+     * @param type 社交平台枚举
+     * @return 结果
+     */
+    UmsMember getMemberBySocialCode(String socialCode, SocialTypeEnum type);
+
+    /**
      * 将用户实体转换为登录用户实体
      * @param member UmsMember
      * @return LoginUser
@@ -84,9 +94,16 @@ public interface IUmsMemberService {
     /**
      * 通过邮箱注册用户
      * @param umsMember 邮箱 密码
-     * @return
+     * @return 结果
      */
-    boolean registerMemberByEmail(UmsMember umsMember);
+    LoginUser registerMemberByEmail(UmsMember umsMember);
+
+    /**
+     * 通过社交账号注册用户
+     * @param umsMemberDTO 社交账号实体
+     * @return 结果
+     */
+    LoginUser registerMemberBySocial(UmsMemberDTO umsMemberDTO);
 
     /**
      * 检查邮箱是否唯一，不唯一则抛出异常

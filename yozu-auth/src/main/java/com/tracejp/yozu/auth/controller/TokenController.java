@@ -1,15 +1,10 @@
 package com.tracejp.yozu.auth.controller;
 
-import com.tracejp.yozu.auth.form.LoginAccountBody;
-import com.tracejp.yozu.auth.form.LoginBody;
-import com.tracejp.yozu.auth.form.LoginSmsBody;
-import com.tracejp.yozu.auth.form.RegisterBody;
-import com.tracejp.yozu.auth.service.SysLoginService;
-import com.tracejp.yozu.auth.service.SysRecordLogService;
-import com.tracejp.yozu.auth.service.UmsLoginService;
-import com.tracejp.yozu.auth.service.UmsRegisterService;
+import com.tracejp.yozu.auth.form.*;
+import com.tracejp.yozu.auth.service.*;
 import com.tracejp.yozu.common.core.constant.Constants;
 import com.tracejp.yozu.common.core.domain.R;
+import com.tracejp.yozu.common.core.exception.ServiceException;
 import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.JwtUtils;
 import com.tracejp.yozu.common.core.utils.StringUtils;
@@ -36,6 +31,9 @@ public class TokenController {
 
     @Autowired
     private UmsLoginService umsLoginService;
+
+    @Autowired
+    private UmsSocialLoginServices umsSocialLoginServices;
 
     @Autowired
     private UmsRegisterService umsRegisterService;
@@ -76,6 +74,18 @@ public class TokenController {
         return R.ok();
     }
 
+    @PostMapping("login/social")
+    public R<?> loginBySocial(@RequestBody LoginSocialBody form) {
+        LoginUser memberInfo;
+        try {
+            memberInfo = umsSocialLoginServices.login(form);
+        } catch (Exception e) {
+            throw new ServiceException("登录失败");
+        }
+        // 获取登录token
+        return R.ok(tokenService.createToken(memberInfo));
+    }
+
     @DeleteMapping("logout")
     public R<?> logout(HttpServletRequest request) {
         String token = SecurityUtils.getToken(request);
@@ -102,8 +112,9 @@ public class TokenController {
 
     @PostMapping("register")
     public R<?> register(@RequestBody RegisterBody registerBody) {
-        umsRegisterService.register(registerBody);
-        return R.ok();
+        LoginUser memberInfo = umsRegisterService.register(registerBody);
+        // 获取登录token
+        return R.ok(tokenService.createToken(memberInfo));
     }
 
     @GetMapping("register/active")

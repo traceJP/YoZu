@@ -9,12 +9,17 @@ import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.core.utils.uuid.UUID;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import com.tracejp.yozu.member.api.domain.UmsMember;
+import com.tracejp.yozu.member.api.domain.dto.UmsMemberDTO;
+import com.tracejp.yozu.member.api.enums.SocialTypeEnum;
+import com.tracejp.yozu.member.domain.UmsMemberOauth;
 import com.tracejp.yozu.member.domain.UmsMemberRole;
 import com.tracejp.yozu.member.mapper.UmsMemberMapper;
+import com.tracejp.yozu.member.mapper.UmsMemberOauthMapper;
 import com.tracejp.yozu.member.mapper.UmsMemberRoleMapper;
 import com.tracejp.yozu.member.service.IUmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +38,9 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
 
     @Autowired
     private UmsMemberRoleMapper umsMemberRoleMapper;
+
+    @Autowired
+    private UmsMemberOauthMapper umsMemberOauthMapper;
 
     /**
      * 查询用户信息
@@ -108,6 +116,17 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
     }
 
     @Override
+    public UmsMember getMemberBySocialCode(String socialCode, SocialTypeEnum type) {
+        UmsMemberOauth social = umsMemberOauthMapper.getOauthBySocialCode(socialCode, type.getCode());
+        if (social == null) {
+            return null;
+        }
+
+        // 查询用户信息
+        return umsMemberMapper.selectUmsMemberByUserId(social.getUserId());
+    }
+
+    @Override
     public LoginUser convertToLoginUser(UmsMember member) {
         LoginUser memberVo = new LoginUser();
         memberVo.setUserInfo(member);
@@ -143,7 +162,7 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
     }
 
     @Override
-    public boolean registerMemberByEmail(UmsMember umsMember) {
+    public LoginUser registerMemberByEmail(UmsMember umsMember) {
         // 检查邮箱是否唯一
         checkEmailUnique(umsMember.getEmail());
 
@@ -151,8 +170,34 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
         String encodePassword = SecurityUtils.encryptPassword(umsMember.getPassword());
         umsMember.setPassword(encodePassword);
 
+        // 插入记录
         UmsMember member = setBaseMemberInfo(umsMember);
-        return umsMemberMapper.insertUmsMember(member) > 0;
+        int inserted = umsMemberMapper.insertUmsMember(member);
+        if (inserted <= 0) {
+            throw new ServiceException("注册失败");
+        }
+
+        return convertToLoginUser(member);
+    }
+
+    @Transactional
+    @Override
+    public LoginUser registerMemberBySocial(UmsMemberDTO umsMemberDTO) {
+        // 注册账号
+        UmsMember member = umsMemberDTO.convertTo();
+        UmsMember insert = setBaseMemberInfo(member);
+        this.insertUmsMember(insert);
+
+        // 绑定社交 uid
+        UmsMemberOauth umsMemberOauth = new UmsMemberOauth();
+        umsMemberOauth.setUserId(insert.getUserId());
+        umsMemberOauth.setSocialId(umsMemberDTO.getSocialUid());
+        umsMemberOauth.setSocialType(umsMemberDTO.getSocialType().getCode());
+        umsMemberOauth.setSocialData(umsMemberDTO.getSocialData());
+        umsMemberOauth.setCreateTime(DateUtils.getNowDate());
+        umsMemberOauthMapper.insertUmsMemberOauth(umsMemberOauth);
+
+        return convertToLoginUser(insert);
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.tracejp.yozu.common.core.exception.ServiceException;
 import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.redis.service.RedisService;
+import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import com.tracejp.yozu.member.api.RemoteMemberService;
 import com.tracejp.yozu.member.api.domain.UmsMember;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -32,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2023/4/23 15:48
  */
 @Component
-public class UmsLoginService extends AbsLoginService {
+public class UmsLoginService {
 
     @Autowired
     private RemoteMemberService remoteMemberService;
@@ -113,6 +114,13 @@ public class UmsLoginService extends AbsLoginService {
         param.put(SmsTemplateParamConstants.LOGIN_CAPTCHA_CODE, code);
         message.setParam(param);
         remoteThirdpartyService.sendSms(message, SecurityConstants.INNER);
+    }
+
+    private void matchesPassword(String rawPassword, String encodedPassword) {
+        boolean matchesPassword = SecurityUtils.matchesPassword(rawPassword, encodedPassword);
+        if (!matchesPassword) {
+            throw new ServiceException("用户名或密码错误");
+        }
     }
 
 }

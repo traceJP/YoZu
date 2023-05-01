@@ -11,6 +11,7 @@ import com.tracejp.yozu.common.core.constant.CacheConstants;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.exception.ServiceException;
+import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.core.utils.uuid.UUID;
 import com.tracejp.yozu.common.redis.service.RedisService;
@@ -42,7 +43,7 @@ public class UmsRegisterService {
     private RedisService redisService;
 
 
-    public void register(RegisterBody form) {
+    public LoginUser register(RegisterBody form) {
         if (!StringUtils.equals(form.getPassword(), form.getConfirmPassword())) {
             throw new ServiceException("两次密码不一致");
         }
@@ -63,10 +64,11 @@ public class UmsRegisterService {
         UmsMember member = new UmsMember();
         member.setEmail(form.getEmail());
         member.setPassword(form.getPassword());
-        R<Boolean> register = remoteMemberService.registerMemberInfo(member, SecurityConstants.INNER);
-        if (R.FAIL == register.getCode()) {
+        R<LoginUser> register = remoteMemberService.registerMemberInfo(member, SecurityConstants.INNER);
+        if (R.FAIL == register.getCode() || register.getData() == null) {
             throw new ServiceException(register.getMsg());
         }
+        return register.getData();
     }
 
     public void emailActiveConfirm(String email, String code) {

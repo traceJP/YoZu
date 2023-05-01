@@ -11,6 +11,8 @@ import com.tracejp.yozu.common.log.annotation.Log;
 import com.tracejp.yozu.common.log.enums.BusinessType;
 import com.tracejp.yozu.common.security.annotation.RequiresPermissions;
 import com.tracejp.yozu.member.api.domain.UmsMember;
+import com.tracejp.yozu.member.api.domain.dto.UmsMemberDTO;
+import com.tracejp.yozu.member.api.enums.SocialTypeEnum;
 import com.tracejp.yozu.member.service.IUmsMemberRoleService;
 import com.tracejp.yozu.member.service.IUmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,11 +98,21 @@ public class UmsMemberController extends BaseController {
         return toAjax(umsMemberService.deleteUmsMemberByUserIds(userIds));
     }
 
-    @GetMapping("/info/{account}")
-    R<LoginUser> getMemberInfo(@PathVariable("account") String account) {
+    @GetMapping("/info/account")
+    R<LoginUser> getMemberInfo(@RequestParam("account") String account) {
         UmsMember member = umsMemberService.getMemberByAccount(account);
         if (StringUtils.isNull(member)) {
             return R.fail("用户名或密码错误");
+        }
+        LoginUser memberVo = umsMemberService.convertToLoginUser(member);
+        return R.ok(memberVo);
+    }
+
+    @GetMapping("/info/social")
+    R<LoginUser> getMemberInfo(@RequestParam("socialCode") String socialCode, @RequestParam("type") SocialTypeEnum type) {
+        UmsMember member = umsMemberService.getMemberBySocialCode(socialCode, type);
+        if (StringUtils.isNull(member)) {
+            return R.fail("未找到社交用户信息");
         }
         LoginUser memberVo = umsMemberService.convertToLoginUser(member);
         return R.ok(memberVo);
@@ -113,13 +125,25 @@ public class UmsMemberController extends BaseController {
     }
 
     @PostMapping("/register/email")
-    R<Boolean> registerMemberInfoByEmail(@RequestBody UmsMember umsMember) {
+    R<LoginUser> registerMemberInfoByEmail(@RequestBody UmsMember umsMember) {
+        LoginUser loginUser;
         try {
-            umsMemberService.registerMemberByEmail(umsMember);
+            loginUser = umsMemberService.registerMemberByEmail(umsMember);
         } catch (Exception e) {
             return R.fail(e.getMessage());
         }
-        return R.ok();
+        return R.ok(loginUser);
+    }
+
+    @PostMapping("/register/social")
+    R<LoginUser> registerMemberInfoBySocial(@RequestBody UmsMemberDTO umsMemberDTO) {
+        LoginUser loginUser;
+        try {
+            loginUser = umsMemberService.registerMemberBySocial(umsMemberDTO);
+        } catch (Exception e) {
+            return R.fail(e.getMessage());
+        }
+        return R.ok(loginUser);
     }
 
 }

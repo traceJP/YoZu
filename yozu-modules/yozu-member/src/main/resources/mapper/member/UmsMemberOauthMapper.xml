@@ -55,6 +55,11 @@
         where id = #{id}
     </select>
 
+    <select id="getOauthBySocialCode" resultMap="UmsMemberOauthResult">
+        <include refid="selectUmsMemberOauthVo"/>
+        where social_id = #{uid} and social_type = #{type}
+    </select>
+
     <insert id="insertUmsMemberOauth" parameterType="UmsMemberOauth" useGeneratedKeys="true"
             keyProperty="id">
         insert into ums_member_oauth
