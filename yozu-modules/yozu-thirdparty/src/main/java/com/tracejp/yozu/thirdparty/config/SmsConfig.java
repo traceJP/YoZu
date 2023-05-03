@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(SmsConfigProperties.class)
-public class SmsAutoConfig {
+public class SmsConfig {
 
     @Configuration
     @ConditionalOnProperty(value = "yozu.sms.handler", havingValue = SmsHandlerType.ALIYUN)
