@@ -32,6 +32,14 @@ public interface IFileHandler {
     Map<String, String> uploadPreSign(String fileName, String bucketName, Map<String, String> params);
 
     /**
+     * 获取文件上传签名
+     * @param identifier 文件标识
+     * @param partId 分块编号
+     * @return 签名
+     */
+    Map<String, String> uploadPreSignByChunk(String identifier, Integer partId);
+
+    /**
      * 初始化分块上传任务
      * @param param 初始化参数
      * @return 任务信息
@@ -42,7 +50,7 @@ public interface IFileHandler {
      * 合并分片
      * @param identifier 文件标识
      */
-    void chunkMerge(String identifier);
+    FileUploadTaskVo chunkMerge(String identifier);
 
     /**
      * 得到分块上传任务信息

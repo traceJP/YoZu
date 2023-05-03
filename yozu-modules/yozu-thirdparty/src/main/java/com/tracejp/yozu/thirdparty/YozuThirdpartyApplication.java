@@ -5,12 +5,11 @@ import com.tracejp.yozu.common.security.annotation.EnableYozuFeignClients;
 import com.tracejp.yozu.common.swagger.annotation.EnableCustomSwagger2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 @EnableCustomConfig
 @EnableCustomSwagger2
 @EnableYozuFeignClients
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@SpringBootApplication
 public class YozuThirdpartyApplication {
 
     public static void main(String[] args) {

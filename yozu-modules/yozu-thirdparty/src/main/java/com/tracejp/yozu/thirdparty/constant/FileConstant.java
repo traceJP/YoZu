@@ -21,6 +21,6 @@ public class FileConstant {
     /**
      * 分片上传任务过期时间（断点续传的最大时间）（ms）
      */
-    public static final Long FILE_UPLOAD_TASK_EXPIRE = 300000L;
+    public static final Long FILE_UPLOAD_TASK_EXPIRE = 86400000L;
 
 }

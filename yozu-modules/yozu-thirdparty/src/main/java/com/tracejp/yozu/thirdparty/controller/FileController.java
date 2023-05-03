@@ -3,13 +3,16 @@ package com.tracejp.yozu.thirdparty.controller;
 import com.tracejp.yozu.api.thirdparty.enums.FileBucketEnum;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.exception.ServiceException;
+import com.tracejp.yozu.common.core.utils.DateUtils;
 import com.tracejp.yozu.common.core.utils.file.FileUtils;
 import com.tracejp.yozu.common.security.annotation.InnerAuth;
+import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import com.tracejp.yozu.system.api.domain.SysFile;
+import com.tracejp.yozu.thirdparty.domain.TmsFileHistory;
 import com.tracejp.yozu.thirdparty.domain.param.InitChunkParam;
 import com.tracejp.yozu.thirdparty.domain.vo.FileUploadTaskVo;
 import com.tracejp.yozu.thirdparty.handler.file.IFileHandler;
-import com.tracejp.yozu.thirdparty.service.FileHistoryService;
+import com.tracejp.yozu.thirdparty.service.ITmsFileHistoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +35,7 @@ public class FileController {
     private IFileHandler fileHandler;
 
     @Autowired
-    private FileHistoryService fileHistoryService;
+    private ITmsFileHistoryService tmsFileHistoryService;
 
 
     /**
@@ -59,6 +62,7 @@ public class FileController {
     /**
      * 获取签名
      * @param filename 保存文件名 eg abc.jpg
+     * @param bucket 桶名
      * @return 签名
      */
     @GetMapping("/sign/{filename}")
@@ -67,7 +71,17 @@ public class FileController {
         return R.ok(result);
     }
 
-    // TODO 获取分块的签名
+    /**
+     * 获取分片签名
+     * @param identifier 文件标识
+     * @param partId 分片序号
+     * @return 签名
+     */
+    @GetMapping("/sign/chunk/{identifier}")
+    public R<?> uploadPreSignByChunk(@PathVariable String identifier, @RequestParam("partId") Integer partId) {
+        Map<String, String> result = fileHandler.uploadPreSignByChunk(identifier, partId);
+        return R.ok(result);
+    }
 
     /**
      * 创建一个分片任务
@@ -86,9 +100,17 @@ public class FileController {
      * @return 合并结果
      */
     @PostMapping("/merge/{identifier}")
-    public R<?> merge (@PathVariable String identifier) {
+    public R<?> merge(@PathVariable String identifier) {
         try {
-            fileHandler.chunkMerge(identifier);
+            FileUploadTaskVo taskVo = fileHandler.chunkMerge(identifier);
+
+            // 记录文件上传历史
+            TmsFileHistory fileHistory = new TmsFileHistory();
+            fileHistory.setIdentifier(identifier);
+            fileHistory.setPath(taskVo.getPath());
+            fileHistory.setCreateTime(DateUtils.getNowDate());
+            fileHistory.setCreateBy(SecurityUtils.getUsername());
+            tmsFileHistoryService.insertTmsFileHistory(fileHistory);
         } catch (ServiceException e) {
             return R.fail(e.getMessage());
         }
@@ -101,16 +123,21 @@ public class FileController {
      */
     @GetMapping("/info/{identifier}")
     public R<FileUploadTaskVo> getUploadInfo(@PathVariable String identifier) {
+        FileUploadTaskVo taskVo;
 
-        // 1 查询数据库 检查是否存在md5，存在则直接返回访问url，不存在说明不是秒传处理
-//        if (存在) {
-//            return R.ok();
-//        }
+        // 检查 md5 是否匹配（秒传处理）
+        TmsFileHistory file = tmsFileHistoryService.selectFileHistoryByIdentifier(identifier);
+        if (file != null) {
+            taskVo = new FileUploadTaskVo();
+            taskVo.setFinished(true);
+            taskVo.setPath(file.getPath());
+            return R.ok(taskVo);
+        }
 
         // 查询是否为分块上传任务
-        FileUploadTaskVo chunkedTask = fileHandler.getChunkTaskInfo(identifier);
-        if (chunkedTask != null) {
-            return R.ok(chunkedTask);
+        taskVo = fileHandler.getChunkTaskInfo(identifier);
+        if (taskVo != null) {
+            return R.ok(taskVo);
         }
 
         // 无上传任务

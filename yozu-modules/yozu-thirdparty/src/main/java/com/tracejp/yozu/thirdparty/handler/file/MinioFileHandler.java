@@ -7,7 +7,7 @@ import com.amazonaws.services.s3.model.*;
 import com.tracejp.yozu.common.core.exception.ServiceException;
 import com.tracejp.yozu.common.redis.service.RedisService;
 import com.tracejp.yozu.thirdparty.constant.FileConstant;
-import com.tracejp.yozu.thirdparty.domain.FileChunkTaskRedisEntity;
+import com.tracejp.yozu.thirdparty.domain.dto.FileChunkTaskRedisEntity;
 import com.tracejp.yozu.thirdparty.domain.param.InitChunkParam;
 import com.tracejp.yozu.thirdparty.domain.vo.FileChunkTaskRecordVo;
 import com.tracejp.yozu.thirdparty.domain.vo.FileUploadTaskVo;
@@ -70,6 +70,22 @@ public class MinioFileHandler implements IFileHandler {
     }
 
     @Override
+    public Map<String, String> uploadPreSignByChunk(String identifier, Integer partId) {
+        // 尝试获取任务信息
+        FileChunkTaskRedisEntity task =
+                redisService.getCacheObject(FileConstant.FILE_UPLOAD_TASK_PREFIX + identifier);
+        if (task == null) {
+            throw new ServiceException("上传任务不存在");
+        }
+
+        // 签名
+        Map<String, String> params = new HashMap<>(2);
+        params.put("partNumber", partId.toString());
+        params.put("uploadId", task.getUploadId());
+        return this.uploadPreSign(task.getFilename(), task.getBucketName(), params);
+    }
+
+    @Override
     public FileUploadTaskVo initChunkTask(InitChunkParam param) {
         // 初始化分片上传
         String fileKey = FileUploadUtils.extractFilename(param.getFilename());
@@ -78,14 +94,17 @@ public class MinioFileHandler implements IFileHandler {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(contentType);
         InitiateMultipartUploadResult initiateMultipartUploadResult = fileClient.initiateMultipartUpload(
-                new InitiateMultipartUploadRequest(param.getBucketName(), fileKey).withObjectMetadata(objectMetadata)
+                new InitiateMultipartUploadRequest(param.getBucket().getBucketName(), fileKey)
+                        .withObjectMetadata(objectMetadata)
         );
         String uploadId = initiateMultipartUploadResult.getUploadId();
 
         // 保存任务信息
         FileChunkTaskRedisEntity task = new FileChunkTaskRedisEntity();
         int chunkNum = (int) Math.ceil(param.getTotalSize() * 1.0 / param.getChunkSize());
-        task.setBucketName(param.getBucketName());
+        task.setFileKey(fileKey);
+        task.setFilename(param.getFilename());
+        task.setBucketName(param.getBucket().getBucketName());
         task.setChunkNum(chunkNum);
         task.setChunkSize(param.getChunkSize());
         task.setTotalSize(param.getTotalSize());
@@ -96,12 +115,12 @@ public class MinioFileHandler implements IFileHandler {
         // 返回初始化信息
         FileUploadTaskVo result = new FileUploadTaskVo();
         result.setFinished(false);
-        result.setPath(getFileUrl(fileKey, param.getBucketName()));
+        result.setPath(getFileUrl(fileKey, param.getBucket().getBucketName()));
         return result;
     }
 
     @Override
-    public void chunkMerge(String identifier) {
+    public FileUploadTaskVo chunkMerge(String identifier) {
         // 尝试获取任务信息
         FileChunkTaskRedisEntity task =
                 redisService.getCacheObject(FileConstant.FILE_UPLOAD_TASK_PREFIX + identifier);
@@ -129,6 +148,15 @@ public class MinioFileHandler implements IFileHandler {
                         .collect(Collectors.toList())
                 );
         fileClient.completeMultipartUpload(completeMultipartUploadRequest);
+
+        // 删除任务信息
+        redisService.deleteObject(FileConstant.FILE_UPLOAD_TASK_PREFIX + identifier);
+
+        // 返回结果
+        FileUploadTaskVo result = new FileUploadTaskVo();
+        result.setFinished(true);
+        result.setPath(getFileUrl(task.getFileKey(), task.getBucketName()));
+        return result;
     }
 
     @Override

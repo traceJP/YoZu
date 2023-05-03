@@ -41,6 +41,12 @@
             <artifactId>spring-web</artifactId>
         </dependency>
 
+        <!-- Spring boot Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
         <!-- Transmittable ThreadLocal -->
         <dependency>
             <groupId>com.alibaba</groupId>

@@ -48,6 +48,18 @@
             <version>${swagger.fox.version}</version>
         </dependency>
 
+        <!-- Mysql Connector -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <!-- yozu Common DataSource -->
+        <dependency>
+            <groupId>com.tracejp.yozu</groupId>
+            <artifactId>yozu-common-datasource</artifactId>
+        </dependency>
+
         <!-- yozu Common Log -->
         <dependency>
             <groupId>com.tracejp.yozu</groupId>

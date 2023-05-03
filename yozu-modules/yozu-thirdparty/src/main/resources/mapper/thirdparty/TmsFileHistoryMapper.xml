@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tracejp.yozu.thirdparty.mapper.TmsFileHistoryMapper">
+    
+    <resultMap type="TmsFileHistory" id="TmsFileHistoryResult">
+        <result property="id"    column="id"    />
+        <result property="path"    column="path"    />
+        <result property="identifier"    column="identifier"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectTmsFileHistoryVo">
+        select id, path, identifier, create_by, create_time, update_by, update_time, remark from tms_file_history
+    </sql>
+
+    <select id="selectTmsFileHistoryList" parameterType="TmsFileHistory" resultMap="TmsFileHistoryResult">
+        <include refid="selectTmsFileHistoryVo"/>
+        <where>  
+            <if test="path != null  and path != ''"> and path = #{path}</if>
+            <if test="identifier != null  and identifier != ''"> and identifier = #{identifier}</if>
+        </where>
+    </select>
+    
+    <select id="selectTmsFileHistoryById" parameterType="Long" resultMap="TmsFileHistoryResult">
+        <include refid="selectTmsFileHistoryVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectFileHistoryByIdentifier" parameterType="string" resultMap="TmsFileHistoryResult">
+        <include refid="selectTmsFileHistoryVo"/>
+        where identifier = #{identifier}
+    </select>
+
+    <insert id="insertTmsFileHistory" parameterType="TmsFileHistory" useGeneratedKeys="true" keyProperty="id">
+        insert into tms_file_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="path != null">path,</if>
+            <if test="identifier != null">identifier,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="path != null">#{path},</if>
+            <if test="identifier != null">#{identifier},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTmsFileHistory" parameterType="TmsFileHistory">
+        update tms_file_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="path != null">path = #{path},</if>
+            <if test="identifier != null">identifier = #{identifier},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTmsFileHistoryById" parameterType="Long">
+        delete from tms_file_history where id = #{id}
+    </delete>
+
+    <delete id="deleteTmsFileHistoryByIds" parameterType="String">
+        delete from tms_file_history where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

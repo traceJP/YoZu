@@ -1,5 +1,6 @@
 package com.tracejp.yozu.thirdparty.domain.param;
 
+import com.tracejp.yozu.api.thirdparty.enums.FileBucketEnum;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -41,7 +42,7 @@ public class InitChunkParam {
     /**
      * 桶名
      */
-    @NotBlank(message = "桶名不能为空")
-    private String bucketName;
+    @NotNull(message = "桶名不能为空")
+    private FileBucketEnum bucket;
 
 }

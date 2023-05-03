@@ -1,4 +1,4 @@
-package com.tracejp.yozu.thirdparty.domain;
+package com.tracejp.yozu.thirdparty.domain.dto;
 
 import lombok.Data;
 
@@ -17,6 +17,11 @@ public class FileChunkTaskRedisEntity {
      * 上传id
      */
     private String uploadId;
+
+    /**
+     * 文件名
+     */
+    private String filename;
 
     /**
      * 文件保存名
