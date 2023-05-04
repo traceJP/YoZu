@@ -24,12 +24,12 @@ public interface IFileHandler {
 
     /**
      * 获取文件上传签名
-     * @param fileName 文件名
+     * @param fileKey 文件名
      * @param bucketName 桶名
      * @param params 附加参数
      * @return 签名
      */
-    Map<String, String> uploadPreSign(String fileName, String bucketName, Map<String, String> params);
+    Map<String, String> uploadPreSign(String fileKey, String bucketName, Map<String, String> params);
 
     /**
      * 获取文件上传签名

@@ -91,19 +91,12 @@
             <version>2.0.23</version>
         </dependency>
 
-        <!-- Minio -->
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>${minio.version}</version>
-        </dependency>
         <!-- minio aws s3 -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.12.263</version>
         </dependency>
-
 
         <!-- api-thirdparty -->
         <dependency>

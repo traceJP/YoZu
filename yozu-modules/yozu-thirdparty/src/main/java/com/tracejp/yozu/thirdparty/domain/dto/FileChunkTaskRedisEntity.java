@@ -19,11 +19,6 @@ public class FileChunkTaskRedisEntity {
     private String uploadId;
 
     /**
-     * 文件名
-     */
-    private String filename;
-
-    /**
      * 文件保存名
      */
     private String fileKey;

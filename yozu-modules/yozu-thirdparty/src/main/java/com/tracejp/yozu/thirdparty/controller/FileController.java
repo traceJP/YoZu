@@ -13,6 +13,7 @@ import com.tracejp.yozu.thirdparty.domain.param.InitChunkParam;
 import com.tracejp.yozu.thirdparty.domain.vo.FileUploadTaskVo;
 import com.tracejp.yozu.thirdparty.handler.file.IFileHandler;
 import com.tracejp.yozu.thirdparty.service.ITmsFileHistoryService;
+import com.tracejp.yozu.thirdparty.util.FileUploadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,13 +62,15 @@ public class FileController {
 
     /**
      * 获取签名
+     *
      * @param filename 保存文件名 eg abc.jpg
-     * @param bucket 桶名
+     * @param bucket   桶名
      * @return 签名
      */
     @GetMapping("/sign/{filename}")
     public R<?> uploadPreSign(@PathVariable String filename, @RequestParam("bucket") FileBucketEnum bucket) {
-        Map<String, String> result = fileHandler.uploadPreSign(filename, bucket.getBucketName(), null);
+        String fileKey = FileUploadUtils.extractFilename(filename);
+        Map<String, String> result = fileHandler.uploadPreSign(fileKey, bucket.getBucketName(), null);
         return R.ok(result);
     }
 

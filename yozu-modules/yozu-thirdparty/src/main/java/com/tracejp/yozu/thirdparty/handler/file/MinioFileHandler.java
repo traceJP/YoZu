@@ -55,8 +55,7 @@ public class MinioFileHandler implements IFileHandler {
     }
 
     @Override
-    public Map<String, String> uploadPreSign(String filename, String bucketName, Map<String, String> params) {
-        String fileKey = FileUploadUtils.extractFilename(filename);
+    public Map<String, String> uploadPreSign(String fileKey, String bucketName, Map<String, String> params) {
         Date currentDate = new Date();
         Date expireDate = DateUtil.offsetMillisecond(currentDate, FileConstant.PRE_SIGN_URL_EXPIRE.intValue());
         GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, fileKey)
@@ -82,7 +81,7 @@ public class MinioFileHandler implements IFileHandler {
         Map<String, String> params = new HashMap<>(2);
         params.put("partNumber", partId.toString());
         params.put("uploadId", task.getUploadId());
-        return this.uploadPreSign(task.getFilename(), task.getBucketName(), params);
+        return this.uploadPreSign(task.getFileKey(), task.getBucketName(), params);
     }
 
     @Override
@@ -103,7 +102,6 @@ public class MinioFileHandler implements IFileHandler {
         FileChunkTaskRedisEntity task = new FileChunkTaskRedisEntity();
         int chunkNum = (int) Math.ceil(param.getTotalSize() * 1.0 / param.getChunkSize());
         task.setFileKey(fileKey);
-        task.setFilename(param.getFilename());
         task.setBucketName(param.getBucket().getBucketName());
         task.setChunkNum(chunkNum);
         task.setChunkSize(param.getChunkSize());
@@ -113,6 +111,7 @@ public class MinioFileHandler implements IFileHandler {
                 task, FileConstant.FILE_UPLOAD_TASK_EXPIRE, TimeUnit.MILLISECONDS);
 
         // 返回初始化信息
+        // TODO 需要把任务信息也返回出去
         FileUploadTaskVo result = new FileUploadTaskVo();
         result.setFinished(false);
         result.setPath(getFileUrl(fileKey, param.getBucket().getBucketName()));
