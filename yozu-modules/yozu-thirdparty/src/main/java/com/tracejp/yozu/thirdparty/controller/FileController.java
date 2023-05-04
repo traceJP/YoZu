@@ -1,5 +1,6 @@
 package com.tracejp.yozu.thirdparty.controller;
 
+import com.tracejp.yozu.api.thirdparty.domain.FileResult;
 import com.tracejp.yozu.api.thirdparty.enums.FileBucketEnum;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.exception.ServiceException;
@@ -7,7 +8,6 @@ import com.tracejp.yozu.common.core.utils.DateUtils;
 import com.tracejp.yozu.common.core.utils.file.FileUtils;
 import com.tracejp.yozu.common.security.annotation.InnerAuth;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
-import com.tracejp.yozu.system.api.domain.SysFile;
 import com.tracejp.yozu.thirdparty.domain.TmsFileHistory;
 import com.tracejp.yozu.thirdparty.domain.param.InitChunkParam;
 import com.tracejp.yozu.thirdparty.domain.vo.FileUploadTaskVo;
@@ -46,11 +46,11 @@ public class FileController {
     @Deprecated
     @InnerAuth
     @PostMapping("/upload")
-    public R<SysFile> upload(MultipartFile file, FileBucketEnum bucket) {
+    public R<FileResult> upload(MultipartFile file, FileBucketEnum bucket) {
         try {
             // 上传并返回访问地址
             String url = fileHandler.uploadFile(file, bucket.getBucketName());
-            SysFile sysFile = new SysFile();
+            FileResult sysFile = new FileResult();
             sysFile.setName(FileUtils.getName(url));
             sysFile.setUrl(url);
             return R.ok(sysFile);

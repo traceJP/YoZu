@@ -12,7 +12,6 @@
         <module>yozu-system</module>
         <module>yozu-gen</module>
         <module>yozu-job</module>
-        <module>yozu-file</module>
         <module>yozu-member</module>
         <module>yozu-thirdparty</module>
     </modules>

@@ -1,5 +1,8 @@
 package com.tracejp.yozu.system.controller;
 
+import com.tracejp.yozu.api.thirdparty.RemoteThirdpartyService;
+import com.tracejp.yozu.api.thirdparty.domain.FileResult;
+import com.tracejp.yozu.api.thirdparty.enums.FileBucketEnum;
 import com.tracejp.yozu.common.core.domain.R;
 import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.StringUtils;
@@ -11,8 +14,6 @@ import com.tracejp.yozu.common.log.annotation.Log;
 import com.tracejp.yozu.common.log.enums.BusinessType;
 import com.tracejp.yozu.common.security.service.TokenService;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
-import com.tracejp.yozu.system.api.RemoteFileService;
-import com.tracejp.yozu.system.api.domain.SysFile;
 import com.tracejp.yozu.system.api.domain.SysUser;
 import com.tracejp.yozu.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class SysProfileController extends BaseController {
     private TokenService tokenService;
 
     @Autowired
-    private RemoteFileService remoteFileService;
+    private RemoteThirdpartyService remoteThirdpartyService;
 
     /**
      * 个人信息
@@ -120,7 +121,7 @@ public class SysProfileController extends BaseController {
             if (!StringUtils.equalsAnyIgnoreCase(extension, MimeTypeUtils.IMAGE_EXTENSION)) {
                 return error("文件格式不正确，请上传" + Arrays.toString(MimeTypeUtils.IMAGE_EXTENSION) + "格式");
             }
-            R<SysFile> fileResult = remoteFileService.upload(file);
+            R<FileResult> fileResult = remoteThirdpartyService.upload(file, FileBucketEnum.DEFAULT);
             if (StringUtils.isNull(fileResult) || StringUtils.isNull(fileResult.getData())) {
                 return error("文件服务异常，请联系管理员");
             }

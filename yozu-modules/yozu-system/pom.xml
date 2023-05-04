@@ -78,6 +78,12 @@
             <artifactId>yozu-common-swagger</artifactId>
         </dependency>
 
+        <!-- yozu api thirdparty -->
+        <dependency>
+            <groupId>com.tracejp.yozu</groupId>
+            <artifactId>yozu-api-thirdparty</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
