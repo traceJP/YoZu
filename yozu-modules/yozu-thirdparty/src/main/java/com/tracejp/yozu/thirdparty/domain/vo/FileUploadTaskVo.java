@@ -1,5 +1,6 @@
 package com.tracejp.yozu.thirdparty.domain.vo;
 
+import com.tracejp.yozu.thirdparty.domain.dto.FileChunkTaskRedisEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -22,6 +23,11 @@ public class FileUploadTaskVo {
      * 文件访问地址
      */
     private String path;
+
+    /**
+     * 任务信息
+     */
+    private FileChunkTaskRedisEntity taskInfo;
 
     /**
      * 已上传的分片记录

@@ -1,12 +1,9 @@
 package com.tracejp.yozu.common.core.model;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
 import com.tracejp.yozu.common.core.enums.UserType;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,9 +60,9 @@ public class LoginUser implements Serializable {
     private UserType userType;
 
     /**
-     * 用户信息 用户需要根据用户类型来自行判断序列化
+     * 用户信息
      */
-    private Map<String, Object> userInfo = new HashMap<>(16);
+    private Object userInfo;
 
     public String getToken() {
         return token;
@@ -139,18 +136,19 @@ public class LoginUser implements Serializable {
         this.userType = userType;
     }
 
-    public Map<String, Object> getUserInfo() {
+    public Object getUserInfo() {
         return userInfo;
     }
 
+    /**
+     * 注意：该方法使用 JSON 进行序列化，属于深拷贝
+     */
     public <T> T getUserInfo(Class<T> clazz) {
         return JSON.parseObject(JSON.toJSONString(userInfo), clazz);
     }
 
-    public void setUserInfo(Object user) {
-        String userJson = JSON.toJSONString(user);
-        Map<String, Object> map = JSON.parseObject(userJson, new TypeReference<Map<String, Object>>() {});
-        userInfo.putAll(map);
+    public void setUserInfo(Object userInfo) {
+        this.userInfo = userInfo;
     }
 
 }

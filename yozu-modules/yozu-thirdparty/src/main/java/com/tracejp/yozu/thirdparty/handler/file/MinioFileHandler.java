@@ -111,9 +111,9 @@ public class MinioFileHandler implements IFileHandler {
                 task, FileConstant.FILE_UPLOAD_TASK_EXPIRE, TimeUnit.MILLISECONDS);
 
         // 返回初始化信息
-        // TODO 需要把任务信息也返回出去
         FileUploadTaskVo result = new FileUploadTaskVo();
         result.setFinished(false);
+        result.setTaskInfo(task);
         result.setPath(getFileUrl(fileKey, param.getBucket().getBucketName()));
         return result;
     }
@@ -178,6 +178,7 @@ public class MinioFileHandler implements IFileHandler {
         PartListing partListing = fileClient.listParts(listPartsRequest);
         List<PartSummary> parts = partListing.getParts();
         result.setFinished(false);
+        result.setTaskInfo(taskVo);
         if (!CollectionUtils.isEmpty(parts)) {
             List<FileChunkTaskRecordVo> recordVos = new ArrayList<>(parts.size());
             // 已完成分片

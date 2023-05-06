@@ -24,7 +24,7 @@ public class FileChunkTaskRedisEntity {
     private String fileKey;
 
     /**
-     * TODO 设置md5 校验下次做
+     * TODO 设置md5 合并校验下次做
      * 文件 md5
      */
     private String identifier;

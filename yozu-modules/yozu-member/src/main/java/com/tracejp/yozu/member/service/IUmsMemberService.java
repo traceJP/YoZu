@@ -111,4 +111,10 @@ public interface IUmsMemberService {
      */
     void checkEmailUnique(String email);
 
+    /**
+     * 更新当前用户登录缓存
+     * @param update UmsMember
+     */
+    void updateCurrentMemberLoginCache(UmsMember update);
+
 }

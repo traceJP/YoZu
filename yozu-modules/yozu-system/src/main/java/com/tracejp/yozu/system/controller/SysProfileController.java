@@ -74,10 +74,11 @@ public class SysProfileController extends BaseController {
         user.setDeptId(null);
         if (userService.updateUserProfile(user) > 0) {
             // 更新缓存用户信息
-            loginUser.getUserInfo(SysUser.class).setNickName(user.getNickName());
-            loginUser.getUserInfo(SysUser.class).setPhonenumber(user.getPhonenumber());
-            loginUser.getUserInfo(SysUser.class).setEmail(user.getEmail());
-            loginUser.getUserInfo(SysUser.class).setSex(user.getSex());
+            sysUser.setNickName(user.getNickName());
+            sysUser.setPhonenumber(user.getPhonenumber());
+            sysUser.setEmail(user.getEmail());
+            sysUser.setSex(user.getSex());
+            loginUser.setUserInfo(sysUser);
             tokenService.setLoginUser(loginUser);
             return success();
         }
@@ -102,7 +103,9 @@ public class SysProfileController extends BaseController {
         if (userService.resetUserPwd(username, SecurityUtils.encryptPassword(newPassword)) > 0) {
             // 更新缓存用户密码
             LoginUser loginUser = SecurityUtils.getLoginUser();
-            loginUser.getUserInfo(SysUser.class).setPassword(SecurityUtils.encryptPassword(newPassword));
+            SysUser sysUser = loginUser.getUserInfo(SysUser.class);
+            sysUser.setPassword(SecurityUtils.encryptPassword(newPassword));
+            loginUser.setUserInfo(sysUser);
             tokenService.setLoginUser(loginUser);
             return success();
         }
@@ -130,7 +133,9 @@ public class SysProfileController extends BaseController {
                 AjaxResult ajax = AjaxResult.success();
                 ajax.put("imgUrl", url);
                 // 更新缓存用户头像
-                loginUser.getUserInfo(SysUser.class).setAvatar(url);
+                SysUser sysUser = loginUser.getUserInfo(SysUser.class);
+                sysUser.setAvatar(url);
+                loginUser.setUserInfo(sysUser);
                 tokenService.setLoginUser(loginUser);
                 return ajax;
             }

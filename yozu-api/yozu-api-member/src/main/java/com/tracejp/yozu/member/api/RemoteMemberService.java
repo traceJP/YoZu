@@ -8,6 +8,7 @@ import com.tracejp.yozu.member.api.domain.UmsMember;
 import com.tracejp.yozu.member.api.domain.dto.UmsMemberDTO;
 import com.tracejp.yozu.member.api.enums.SocialTypeEnum;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -72,7 +73,8 @@ public interface RemoteMemberService {
      * @param source  请求来源
      * @return 结果
      */
-    @PostMapping(value = "/member/register/social")
+    // TODO 这里需要测试 加上json格式不会被 gzip 压缩
+    @PostMapping(value = "/member/register/social", consumes = MediaType.APPLICATION_JSON_VALUE)
     R<LoginUser> registerMemberInfo(@RequestBody UmsMemberDTO umsMember,
                                   @RequestHeader(SecurityConstants.FROM_SOURCE) String source
     );

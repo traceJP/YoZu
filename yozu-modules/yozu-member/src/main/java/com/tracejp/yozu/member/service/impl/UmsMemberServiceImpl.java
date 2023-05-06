@@ -6,7 +6,9 @@ import com.tracejp.yozu.common.core.exception.ServiceException;
 import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.DateUtils;
 import com.tracejp.yozu.common.core.utils.StringUtils;
+import com.tracejp.yozu.common.core.utils.bean.BeanUtils;
 import com.tracejp.yozu.common.core.utils.uuid.UUID;
+import com.tracejp.yozu.common.security.service.TokenService;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import com.tracejp.yozu.member.api.domain.UmsMember;
 import com.tracejp.yozu.member.api.domain.dto.UmsMemberDTO;
@@ -41,6 +43,10 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
 
     @Autowired
     private UmsMemberOauthMapper umsMemberOauthMapper;
+
+    @Autowired
+    private TokenService tokenService;
+
 
     /**
      * 查询用户信息
@@ -206,6 +212,15 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
         if (member != null) {
             throw new ServiceException("邮箱已存在");
         }
+    }
+
+    @Override
+    public void updateCurrentMemberLoginCache(UmsMember update) {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        UmsMember userInfo = loginUser.getUserInfo(UmsMember.class);
+        BeanUtils.updateProperties(update, userInfo);
+        loginUser.setUserInfo(userInfo);
+        tokenService.setLoginUser(loginUser);
     }
 
     private UmsMember setBaseMemberInfo(UmsMember member) {

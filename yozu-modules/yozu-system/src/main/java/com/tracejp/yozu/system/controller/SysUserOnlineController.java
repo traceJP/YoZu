@@ -37,7 +37,6 @@ public class SysUserOnlineController extends BaseController {
     @RequiresPermissions("monitor:online:list")
     @GetMapping("/list")
     public TableDataInfo list(String ipaddr, String userName) {
-        // TODO 改造 排除掉注册用户的登录状态控制
         Collection<String> keys = redisService.keys(CacheConstants.LOGIN_TOKEN_KEY + "*");
         List<SysUserOnline> userOnlineList = new ArrayList<SysUserOnline>();
         for (String key : keys) {

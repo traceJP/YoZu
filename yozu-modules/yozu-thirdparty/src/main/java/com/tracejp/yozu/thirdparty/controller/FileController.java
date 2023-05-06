@@ -46,7 +46,7 @@ public class FileController {
     @Deprecated
     @InnerAuth
     @PostMapping("/upload")
-    public R<FileResult> upload(MultipartFile file, FileBucketEnum bucket) {
+    public R<FileResult> upload(MultipartFile file, @RequestParam("bucket") FileBucketEnum bucket) {
         try {
             // 上传并返回访问地址
             String url = fileHandler.uploadFile(file, bucket.getBucketName());

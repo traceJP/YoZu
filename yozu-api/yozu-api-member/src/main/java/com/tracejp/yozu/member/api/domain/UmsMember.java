@@ -47,12 +47,6 @@ public class UmsMember extends BaseEntity {
     private String email;
 
     /**
-     * 邮箱是否被验证（0未验证
-     */
-    @Excel(name = "邮箱是否被验证", readConverterExp = "邮箱是否被验证（0未验证")
-    private Integer emailChecked;
-
-    /**
      * 手机号码
      */
     @Excel(name = "手机号码")

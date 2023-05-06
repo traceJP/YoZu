@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -47,6 +48,6 @@ public interface RemoteThirdpartyService {
      */
     @Deprecated
     @PostMapping(value = "/file/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    R<FileResult> upload(MultipartFile file, FileBucketEnum bucket);
+    R<FileResult> upload(MultipartFile file, @RequestParam("bucket") FileBucketEnum bucket);
 
 }
