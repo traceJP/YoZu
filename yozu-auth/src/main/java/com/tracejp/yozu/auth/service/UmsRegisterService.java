@@ -4,12 +4,11 @@ import com.tracejp.yozu.api.thirdparty.RemoteThirdpartyService;
 import com.tracejp.yozu.api.thirdparty.constant.MailTemplateParamConstants;
 import com.tracejp.yozu.api.thirdparty.domain.MailMessage;
 import com.tracejp.yozu.api.thirdparty.enums.MailTemplateEnum;
-import com.tracejp.yozu.auth.constant.LoginEmailConstants;
-import com.tracejp.yozu.auth.domain.EmailActiveRedisEntity;
 import com.tracejp.yozu.auth.form.RegisterBody;
-import com.tracejp.yozu.common.core.constant.CacheConstants;
+import com.tracejp.yozu.common.core.constant.CaptchaConstants;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
 import com.tracejp.yozu.common.core.domain.R;
+import com.tracejp.yozu.common.core.domain.redis.EmailActiveRedisEntity;
 import com.tracejp.yozu.common.core.exception.ServiceException;
 import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.StringUtils;
@@ -48,7 +47,7 @@ public class UmsRegisterService {
             throw new ServiceException("两次密码不一致");
         }
 
-        String redisKey = CacheConstants.AUTH_EMAIL_ACTIVE_CODE_KEY + form.getEmail();
+        String redisKey = CaptchaConstants.AUTH_EMAIL_ACTIVE_CODE_KEY + form.getEmail();
         EmailActiveRedisEntity active = (EmailActiveRedisEntity) redisService.getCacheObject(redisKey);
         if (active == null) {
             throw new ServiceException("邮箱激活链接已过期");
@@ -72,7 +71,7 @@ public class UmsRegisterService {
     }
 
     public void emailActiveConfirm(String email, String code) {
-        String redisKey = CacheConstants.AUTH_EMAIL_ACTIVE_CODE_KEY + email;
+        String redisKey = CaptchaConstants.AUTH_EMAIL_ACTIVE_CODE_KEY + email;
         EmailActiveRedisEntity active = (EmailActiveRedisEntity) redisService.getCacheObject(redisKey);
         if (active == null) {
             throw new ServiceException("邮箱激活链接已过期");
@@ -90,19 +89,18 @@ public class UmsRegisterService {
         redisService.setCacheObject(
                 redisKey,
                 active,
-                LoginEmailConstants.ACTIVE_CODE_EXPIRE,
+                CaptchaConstants.ACTIVE_CODE_EXPIRE,
                 TimeUnit.MILLISECONDS
         );
-
     }
 
     public void sendActiveEmail(String email) {
-        String redisKey = CacheConstants.AUTH_EMAIL_ACTIVE_CODE_KEY + email;
+        String redisKey = CaptchaConstants.AUTH_EMAIL_ACTIVE_CODE_KEY + email;
 
         // 防刷验证
         long currentTime = System.currentTimeMillis();
         EmailActiveRedisEntity active = (EmailActiveRedisEntity) redisService.getCacheObject(redisKey);
-        if (active != null && currentTime - active.getSendTime() < LoginEmailConstants.CODE_REPEAT_EXPIRE) {
+        if (active != null && currentTime - active.getSendTime() < CaptchaConstants.CODE_REPEAT_EXPIRE) {
             throw new ServiceException("请勿频繁发送邮件");
         }
 
@@ -111,7 +109,7 @@ public class UmsRegisterService {
         redisService.setCacheObject(
                 redisKey,
                 new EmailActiveRedisEntity(code, false, currentTime),
-                LoginEmailConstants.ACTIVE_CODE_EXPIRE,
+                CaptchaConstants.ACTIVE_CODE_EXPIRE,
                 TimeUnit.MILLISECONDS
         );
 

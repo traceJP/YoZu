@@ -1,4 +1,4 @@
-package com.tracejp.yozu.auth.domain;
+package com.tracejp.yozu.common.core.domain.redis;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

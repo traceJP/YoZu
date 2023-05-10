@@ -4,13 +4,12 @@ import com.tracejp.yozu.api.thirdparty.RemoteThirdpartyService;
 import com.tracejp.yozu.api.thirdparty.constant.SmsTemplateParamConstants;
 import com.tracejp.yozu.api.thirdparty.domain.SmsMessage;
 import com.tracejp.yozu.api.thirdparty.enums.SmsTemplateEnum;
-import com.tracejp.yozu.auth.constant.LoginSmsConstants;
-import com.tracejp.yozu.auth.domain.SmsCaptchaRedisEntity;
 import com.tracejp.yozu.auth.form.LoginAccountBody;
 import com.tracejp.yozu.auth.form.LoginSmsBody;
-import com.tracejp.yozu.common.core.constant.CacheConstants;
+import com.tracejp.yozu.common.core.constant.CaptchaConstants;
 import com.tracejp.yozu.common.core.constant.SecurityConstants;
 import com.tracejp.yozu.common.core.domain.R;
+import com.tracejp.yozu.common.core.domain.redis.SmsCaptchaRedisEntity;
 import com.tracejp.yozu.common.core.exception.ServiceException;
 import com.tracejp.yozu.common.core.model.LoginUser;
 import com.tracejp.yozu.common.core.utils.StringUtils;
@@ -65,7 +64,7 @@ public class UmsLoginService {
 
     public LoginUser loginBySms(LoginSmsBody form) {
         // 验证码判断
-        String redisKey = CacheConstants.AUTH_SMS_CAPTCHA_KEY + form.getPhone();
+        String redisKey = CaptchaConstants.AUTH_SMS_CAPTCHA_KEY + form.getPhone();
         SmsCaptchaRedisEntity captcha = (SmsCaptchaRedisEntity) redisService.getCacheObject(redisKey);
         if (captcha == null) {
             throw new ServiceException("验证码失效，请重新发送");
@@ -88,21 +87,21 @@ public class UmsLoginService {
     }
 
     public void sendSmsCaptcha(String phone) {
-        String redisKey = CacheConstants.AUTH_SMS_CAPTCHA_KEY + phone;
+        String redisKey = CaptchaConstants.AUTH_SMS_CAPTCHA_KEY + phone;
 
         // 防刷
         long currentTime = System.currentTimeMillis();
         SmsCaptchaRedisEntity smsCaptcha = (SmsCaptchaRedisEntity) redisService.getCacheObject(redisKey);
-        if (smsCaptcha != null && currentTime - smsCaptcha.getSendTime() < LoginSmsConstants.CAPTCHA_REPEAT_EXPIRE) {
+        if (smsCaptcha != null && currentTime - smsCaptcha.getSendTime() < CaptchaConstants.CAPTCHA_REPEAT_EXPIRE) {
             throw new ServiceException("请勿频繁发送验证码");
         }
 
         // 保存验证码
-        String code = RandomStringUtils.randomNumeric(LoginSmsConstants.CAPTCHA_COUNT);
+        String code = RandomStringUtils.randomNumeric(CaptchaConstants.CAPTCHA_COUNT);
         redisService.setCacheObject(
                 redisKey,
                 new SmsCaptchaRedisEntity(code, currentTime),
-                LoginSmsConstants.CAPTCHA_EXPIRE,
+                CaptchaConstants.CAPTCHA_EXPIRE,
                 TimeUnit.MILLISECONDS
         );
 

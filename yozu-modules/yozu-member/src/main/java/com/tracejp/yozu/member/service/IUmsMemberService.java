@@ -117,4 +117,36 @@ public interface IUmsMemberService {
      */
     void updateCurrentMemberLoginCache(UmsMember update);
 
+    /**
+     * 更新邮箱
+     * @param userInfo UmsMember
+     */
+    void updateEmail(UmsMember userInfo);
+
+    /**
+     * 更新手机号
+     * @param userInfo
+     * @param code
+     */
+    void updatePhone(UmsMember userInfo, String code);
+
+    /**
+     * 发送邮箱验证码
+     * @param email 邮箱
+     */
+    void sendEmailCaptcha(String email);
+
+    /**
+     * 激活邮箱验证码
+     * @param email 邮箱
+     * @param code 验证码
+     */
+    void activeVerifyEmail(String email, String code);
+
+    /**
+     * 发送手机验证码
+     * @param phone 手机号
+     */
+    void sendSmsCaptcha(String phone);
+
 }

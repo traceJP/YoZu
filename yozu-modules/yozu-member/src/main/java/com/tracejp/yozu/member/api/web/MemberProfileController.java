@@ -37,6 +37,7 @@ public class MemberProfileController {
 
     /**
      * 个人信息
+     *
      * @return MemberProfileVo
      */
     @RequiresLogin
@@ -55,6 +56,7 @@ public class MemberProfileController {
 
     /**
      * 信息修改
+     *
      * @param param MemberProfileParam
      */
     @RequiresLogin
@@ -72,11 +74,12 @@ public class MemberProfileController {
 
     /**
      * 修改密码
+     *
      * @param oldPassword 老密码
      * @param newPassword 新密码
      */
     @RequiresLogin
-    @PutMapping("/update/pwd")
+    @PutMapping("/password")
     public AjaxResult updatePassword(String oldPassword, String newPassword) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
         UmsMember userInfo = loginUser.getUserInfo(UmsMember.class);
@@ -99,8 +102,79 @@ public class MemberProfileController {
         return error("修改密码异常，请联系管理员");
     }
 
-    // 3、手机号修改
-    // 4、邮箱修改
+    /**
+     * 手机号修改
+     *
+     * @param phone 新手机号
+     * @param code  验证码
+     */
+    @RequiresLogin
+    @PutMapping("/phone")
+    public AjaxResult updatePhone(String phone, String code) {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        UmsMember userInfo = loginUser.getUserInfo(UmsMember.class);
+        if (StringUtils.equals(userInfo.getPhonenumber(), phone)) {
+            return error("新手机号不能与旧手机号相同");
+        }
+        userInfo.setPhonenumber(phone);
+        memberService.updatePhone(userInfo, code);
+        // 更新缓存
+        memberService.updateCurrentMemberLoginCache(userInfo);
+        return success();
+    }
 
+    /**
+     * 邮箱号修改
+     *
+     * @param email 新邮箱号
+     */
+    @RequiresLogin
+    @PutMapping("/email")
+    public AjaxResult updateEmail(String email) {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        UmsMember userInfo = loginUser.getUserInfo(UmsMember.class);
+        if (StringUtils.equals(userInfo.getEmail(), email)) {
+            return error("新邮箱号不能与旧邮箱号相同");
+        }
+        userInfo.setEmail(email);
+        memberService.updateEmail(userInfo);
+        // 更新缓存
+        memberService.updateCurrentMemberLoginCache(userInfo);
+        return success();
+    }
+
+    /**
+     * 发送短信验证码
+     *
+     * @param phone 手机号
+     */
+    @GetMapping("/verify/sms/{phone}")
+    public AjaxResult sendSmsCaptcha(@PathVariable String phone) {
+        memberService.sendSmsCaptcha(phone);
+        return success();
+    }
+
+    /**
+     * 发送邮箱验证码
+     *
+     * @param email 邮箱号
+     */
+    @GetMapping("/verify/email/{email}")
+    public AjaxResult sendEmailCaptcha(@PathVariable String email) {
+        memberService.sendEmailCaptcha(email);
+        return success();
+    }
+
+    /**
+     * 激活邮箱验证码
+     *
+     * @param email 邮箱号
+     * @param code  验证码
+     */
+    @GetMapping("/verify/email/active")
+    public AjaxResult activeVerifyEmail(@RequestParam("email") String email, @RequestParam("code") String code) {
+        memberService.activeVerifyEmail(email, code);
+        return success();
+    }
 
 }

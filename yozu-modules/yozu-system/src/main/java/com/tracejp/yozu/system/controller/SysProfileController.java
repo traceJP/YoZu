@@ -23,9 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Arrays;
 
 /**
- * 个人信息 业务处理
- * <p>
- * TODO 参考此处个人信息业务处理 - 需要单独抽离个人信息修改业务、密码修改业务、头像修改业务
+ * <p> 个人信息 业务处理 </p>
  *
  * @author yozu
  */

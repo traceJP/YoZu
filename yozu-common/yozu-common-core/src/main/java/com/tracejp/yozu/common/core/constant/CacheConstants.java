@@ -56,14 +56,4 @@ public class CacheConstants {
      */
     public static final String SYS_LOGIN_BLACKIPLIST = SYS_CONFIG_KEY + "sys.login.blackIPList";
 
-    /**
-     * 注册邮箱激活码 redis key
-     */
-    public static final String AUTH_EMAIL_ACTIVE_CODE_KEY = "auth_email_code:";
-
-    /**
-     * 短信验证码 redis key
-     */
-    public static final String AUTH_SMS_CAPTCHA_KEY = "auth_sms_captcha:";
-
 }

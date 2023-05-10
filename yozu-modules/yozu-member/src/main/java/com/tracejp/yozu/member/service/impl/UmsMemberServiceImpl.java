@@ -1,5 +1,16 @@
 package com.tracejp.yozu.member.service.impl;
 
+import com.tracejp.yozu.api.thirdparty.RemoteThirdpartyService;
+import com.tracejp.yozu.api.thirdparty.constant.MailTemplateParamConstants;
+import com.tracejp.yozu.api.thirdparty.constant.SmsTemplateParamConstants;
+import com.tracejp.yozu.api.thirdparty.domain.MailMessage;
+import com.tracejp.yozu.api.thirdparty.domain.SmsMessage;
+import com.tracejp.yozu.api.thirdparty.enums.MailTemplateEnum;
+import com.tracejp.yozu.api.thirdparty.enums.SmsTemplateEnum;
+import com.tracejp.yozu.common.core.constant.CaptchaConstants;
+import com.tracejp.yozu.common.core.constant.SecurityConstants;
+import com.tracejp.yozu.common.core.domain.redis.EmailActiveRedisEntity;
+import com.tracejp.yozu.common.core.domain.redis.SmsCaptchaRedisEntity;
 import com.tracejp.yozu.common.core.enums.UserStatus;
 import com.tracejp.yozu.common.core.enums.UserType;
 import com.tracejp.yozu.common.core.exception.ServiceException;
@@ -8,6 +19,7 @@ import com.tracejp.yozu.common.core.utils.DateUtils;
 import com.tracejp.yozu.common.core.utils.StringUtils;
 import com.tracejp.yozu.common.core.utils.bean.BeanUtils;
 import com.tracejp.yozu.common.core.utils.uuid.UUID;
+import com.tracejp.yozu.common.redis.service.RedisService;
 import com.tracejp.yozu.common.security.service.TokenService;
 import com.tracejp.yozu.common.security.utils.SecurityUtils;
 import com.tracejp.yozu.member.api.domain.UmsMember;
@@ -19,13 +31,13 @@ import com.tracejp.yozu.member.mapper.UmsMemberMapper;
 import com.tracejp.yozu.member.mapper.UmsMemberOauthMapper;
 import com.tracejp.yozu.member.mapper.UmsMemberRoleMapper;
 import com.tracejp.yozu.member.service.IUmsMemberService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 用户信息Service业务层处理
@@ -46,6 +58,12 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    private RemoteThirdpartyService remoteThirdpartyService;
 
 
     /**
@@ -230,6 +248,120 @@ public class UmsMemberServiceImpl implements IUmsMemberService {
         member.setStatus(UserStatus.OK.getCode());
         member.setCreateTime(DateUtils.getNowDate());
         return member;
+    }
+
+    @Override
+    public void updateEmail(UmsMember userInfo) {
+        String redisKey = CaptchaConstants.AUTH_EMAIL_ACTIVE_CODE_KEY + userInfo.getEmail();
+        EmailActiveRedisEntity active = (EmailActiveRedisEntity) redisService.getCacheObject(redisKey);
+        if (active == null) {
+            throw new ServiceException("邮箱激活链接已过期");
+        }
+        if (!active.getActive()) {
+            throw new ServiceException("未通过邮箱验证");
+        }
+        updateUmsMember(userInfo);
+    }
+
+    @Override
+    public void updatePhone(UmsMember userInfo, String code) {
+        // 验证码判断
+        String redisKey = CaptchaConstants.AUTH_SMS_CAPTCHA_KEY + userInfo.getPhonenumber();
+        SmsCaptchaRedisEntity captcha = (SmsCaptchaRedisEntity) redisService.getCacheObject(redisKey);
+        if (captcha == null) {
+            throw new ServiceException("验证码失效，请重新发送");
+        }
+        if (!StringUtils.equals(captcha.getCode(), code)) {
+            throw new ServiceException("验证码错误，请重新输入");
+        }
+
+        updateUmsMember(userInfo);
+    }
+
+    @Override
+    public void sendEmailCaptcha(String email) {
+        String redisKey = CaptchaConstants.AUTH_EMAIL_ACTIVE_CODE_KEY + email;
+
+        // 防刷验证
+        long currentTime = System.currentTimeMillis();
+        EmailActiveRedisEntity active = (EmailActiveRedisEntity) redisService.getCacheObject(redisKey);
+        if (active != null && currentTime - active.getSendTime() < CaptchaConstants.CODE_REPEAT_EXPIRE) {
+            throw new ServiceException("请勿频繁发送邮件");
+        }
+
+        // 保存激活码
+        String code = UUID.fastUUID().toString(true);
+        redisService.setCacheObject(
+                redisKey,
+                new EmailActiveRedisEntity(code, false, currentTime),
+                CaptchaConstants.ACTIVE_CODE_EXPIRE,
+                TimeUnit.MILLISECONDS
+        );
+
+        // 邮件发送
+        MailMessage mailMessage = new MailMessage();
+        mailMessage.setEmails(email);
+        mailMessage.setTemplate(MailTemplateEnum.REGISTER_TEMPLATE);
+        Map<String, Object> params = new HashMap<>();
+        params.put(MailTemplateParamConstants.REGISTER_MAIL, email);
+        params.put(MailTemplateParamConstants.REGISTER_CODE, code);
+        mailMessage.setParams(params);
+        remoteThirdpartyService.sendMail(mailMessage, SecurityConstants.INNER);
+    }
+
+    @Override
+    public void activeVerifyEmail(String email, String code) {
+        String redisKey = CaptchaConstants.AUTH_EMAIL_ACTIVE_CODE_KEY + email;
+        EmailActiveRedisEntity active = (EmailActiveRedisEntity) redisService.getCacheObject(redisKey);
+        if (active == null) {
+            throw new ServiceException("邮箱激活链接已过期");
+        }
+        if (!StringUtils.equals(active.getCode(), code)) {
+            throw new ServiceException("邮箱激活码错误");
+        }
+        if (active.getActive()) {
+            throw new ServiceException("邮箱已激活");
+        }
+
+        // 激活
+        active.setActive(true);
+        active.setSendTime(System.currentTimeMillis());
+        redisService.setCacheObject(
+                redisKey,
+                active,
+                CaptchaConstants.ACTIVE_CODE_EXPIRE,
+                TimeUnit.MILLISECONDS
+        );
+    }
+
+    @Override
+    public void sendSmsCaptcha(String phone) {
+        String redisKey = CaptchaConstants.AUTH_SMS_CAPTCHA_KEY + phone;
+
+        // 防刷
+        long currentTime = System.currentTimeMillis();
+        SmsCaptchaRedisEntity smsCaptcha = (SmsCaptchaRedisEntity) redisService.getCacheObject(redisKey);
+        if (smsCaptcha != null && currentTime - smsCaptcha.getSendTime() < CaptchaConstants.CAPTCHA_REPEAT_EXPIRE) {
+            throw new ServiceException("请勿频繁发送验证码");
+        }
+
+        // 保存验证码
+        String code = RandomStringUtils.randomNumeric(CaptchaConstants.CAPTCHA_COUNT);
+        redisService.setCacheObject(
+                redisKey,
+                new SmsCaptchaRedisEntity(code, currentTime),
+                CaptchaConstants.CAPTCHA_EXPIRE,
+                TimeUnit.MILLISECONDS
+        );
+
+        // 发送验证码
+        SmsMessage message = new SmsMessage();
+        message.setPhones(phone);
+        message.setTemplateId(SmsTemplateEnum.LOGIN_CAPTCHA_TEMPLATE.getTemplateId());
+        Map<String, String> param = new HashMap<>();
+        param.put(SmsTemplateParamConstants.LOGIN_CAPTCHA_CODE, code);
+        message.setParam(param);
+        remoteThirdpartyService.sendSms(message, SecurityConstants.INNER);
     }
 
 }

@@ -84,6 +84,11 @@
             <artifactId>yozu-api-member</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.tracejp.yozu</groupId>
+            <artifactId>yozu-api-thirdparty</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
